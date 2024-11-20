@@ -1,16 +1,14 @@
 import {Sprite} from "./Sprite.ts";
 import {CaraPlayer} from "./CaraPlayer.ts";
 import {InputHandler} from "./InputHandler.ts";
-import {Level} from "./Level.ts";
-import {LevelTreasureHunt} from "./LevelTreasureHunt.ts";
 
 export class Game {
 
     canvas: HTMLCanvasElement;
-    ctx: CanvasRenderingContext2D;
+    ctx: CanvasRenderingContext2D | null;
     caraPlayer: CaraPlayer[];
     inputHandler : InputHandler;
-    currentLevel : Level;
+    lastTime: number;
     //diagonal_
     direction: string[] = ['up', 'right', 'left', 'down-right', 'down-left', 'up-right',  'up-left', 'down'];
 
@@ -19,7 +17,7 @@ export class Game {
         this.ctx = context;
         this.caraPlayer = [];
         this.inputHandler = new InputHandler();
-        this.startNewLevel();
+        this.lastTime = 0;
 
         requestAnimationFrame(this.gameLoop.bind(this));
         this.addCaraPlayer(
@@ -29,22 +27,37 @@ export class Game {
     addCaraPlayer(sprite : Sprite, key : string[]){
         this.caraPlayer.push(CaraPlayer.createCaraPlayer(sprite, key));
     }
-    gameLoop(){
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        this.currentLevel.update(16);
-        this.currentLevel.draw(this.ctx);
+    gameLoop(timestamp: number){
+        const deltaTime = timestamp - this.lastTime;
+        this.lastTime = timestamp;
+        this.update(deltaTime);
+        this.draw();
         requestAnimationFrame(this.gameLoop.bind(this));
     }
 
 
+    private update(deltaTime: number)  {
+
+        for (let cara of this.caraPlayer) {
+            cara.update(this.inputHandler ,deltaTime);
+        }
+
+    }
+
+    private draw() {
+        if (!this.ctx) return;
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (let cara of this.caraPlayer) {
+            cara.draw(this.ctx);
+        }
+    }
+
     start() {
-        //requestAnimationFrame(this.gameLoop.bind(this));
-        this.currentLevel = new LevelTreasureHunt(this.caraPlayer,this);
+        requestAnimationFrame(this.gameLoop.bind(this));
+
     }
 
     startNewLevel() {
-        this.currentLevel = new LevelTreasureHunt(this.caraPlayer,this);
 
     }
 }

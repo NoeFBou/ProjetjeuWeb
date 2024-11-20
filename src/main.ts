@@ -1,4 +1,4 @@
-import { Game } from './Game';
+import {Game} from "./Game.ts";
 
 window.addEventListener('load', () => {
     const canvas = document.getElementById('gameCanvas') as HTMLCanvasElement;

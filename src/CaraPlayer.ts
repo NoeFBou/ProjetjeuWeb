@@ -6,15 +6,20 @@ export class CaraPlayer {
   public key : string[];
   public direction: string;
   sprite: Sprite;
-  speed: number = 2;
+  speed: number = 7;
   public score: number = 0;
   size = 64;
+  respawnPosition: { x: number; y: number };
+  isRespawn : boolean;
+  respawnTime=0;
 
   constructor(sprite: Sprite, key: string[]) {
     this.position = { x:0, y:0 };
     this.direction = 'down';
     this.sprite = sprite;
     this.key = key;
+    this.respawnPosition = { x:0, y:0 };
+    this.isRespawn=false;
   }
 
 
@@ -34,6 +39,12 @@ export class CaraPlayer {
     else this.position.y += dy;
 
     this.setDirection(dx, dy);
+    if(this.isRespawn) {
+      this.respawnTime -= deltaTime;
+      if(this.respawnTime <=0)
+        this.isRespawn=false;
+    }
+
 
     this.sprite.update(deltaTime, this.direction);
   }
@@ -56,5 +67,15 @@ export class CaraPlayer {
 
   static createCaraPlayer(sprite: Sprite, key: string[]) {
       return new CaraPlayer(sprite, key);
+  }
+  getIsRespawn():boolean{
+    return this.isRespawn;
+  }
+
+  respawn() {
+    this.position.x = this.respawnPosition.x;
+    this.position.y = this.respawnPosition.y;
+    this.isRespawn=true;
+    this.respawnTime=1000;
   }
 }

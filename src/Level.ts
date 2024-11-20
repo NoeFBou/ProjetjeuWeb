@@ -1,24 +1,23 @@
-import {Game} from "./Game.ts";
-import {CaraPlayer} from "./CaraPlayer.ts";
+// src/Level.ts
+
+import { CaraPlayer } from './CaraPlayer';
 
 export abstract class Level {
-    protected characters: CaraPlayer[];
-    protected game: Game;
+    characters: CaraPlayer[];
 
-    constructor(characters: CaraPlayer[], game: Game) {
+    constructor(characters: CaraPlayer[]) {
         this.characters = characters;
-        this.game = game;
     }
 
     /**
-     * Méthode abstraite pour mettre à jour l'état du niveau.
-     * Doit être implémentée par les classes dérivées.
+     * Met à jour l'état du niveau.
+     * @param deltaTime Temps écoulé depuis la dernière mise à jour en millisecondes.
      */
     abstract update(deltaTime: number): void;
 
     /**
-     * Méthode abstraite pour dessiner le niveau à l'écran.
-     * Doit être implémentée par les classes dérivées.
+     * Dessine le niveau sur le canvas.
+     * @param context Le contexte de rendu du canvas.
      */
     abstract draw(context: CanvasRenderingContext2D): void;
 }
