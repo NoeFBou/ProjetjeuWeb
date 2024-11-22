@@ -3,6 +3,7 @@ import {CaraPlayer} from "./CaraPlayer.ts";
 import {InputHandler} from "./InputHandler.ts";
 import {Level} from "./Level.ts";
 import {LevelTreasureHunt} from "./LevelTreasureHunt.ts";
+import {LevelSurvive} from "./LevelSurvive.ts";
 
 export class Game {
 
@@ -19,7 +20,8 @@ export class Game {
         this.ctx = context;
         this.caraPlayer = [];
         this.inputHandler = new InputHandler();
-        this.startNewLevel();
+
+       // this.startNewLevel();
 
         requestAnimationFrame(this.gameLoop.bind(this));
         this.addCaraPlayer(
@@ -44,7 +46,11 @@ export class Game {
     }
 
     startNewLevel() {
-        this.currentLevel = new LevelTreasureHunt(this.caraPlayer,this);
-
+        const levelType = Math.random() < 0.5 ? 'TypeOne' : 'TypeTwo';
+        if (levelType === 'TypeOne') {
+            this.currentLevel = new LevelTreasureHunt(this.caraPlayer, this);
+        } else {
+            this.currentLevel = new LevelSurvive(this.caraPlayer, this);
+        }
     }
 }

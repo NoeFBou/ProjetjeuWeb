@@ -24,10 +24,7 @@ export class Treasure {
 
 
         const randomRow = Math.floor(Math.random() * rows);
-        const randomCol = Math.floor(Math.random() * cols);
-        console.log(cols)
         const tile = tiles[randomRow][cols-1];
-        console.log(tile)
 
         if (!tile.isHole) {
             this.position = {
@@ -45,7 +42,7 @@ export class Treasure {
      * @param context Le contexte de rendu du canvas.
      */
     draw(context: CanvasRenderingContext2D): void {
-        context.fillStyle="green";
+        context.fillStyle="yellow";
         context.fillRect(this.position.x,this.position.y,32,32);
         //this.sprite.render(context, this.position.x, this.position.y);
     }

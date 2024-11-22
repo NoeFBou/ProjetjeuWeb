@@ -21,14 +21,7 @@ export class LevelTreasureHunt extends Level {
         super(characters);
         this.game = game;
         this.tiles = [];
-        /*
-        for (let i = 0; i < 24; i++) {
-            const row : Tile[]=[];
-            for (let j = 0; j < 43; j++) {
-                row.push( new Tile(j*32,i*32));
-            }
-            this.tiles.push(row);
-        }*/
+
         this.initTuile();
         this.tileSize = 32;
         this.meteors = [];
@@ -71,7 +64,7 @@ export class LevelTreasureHunt extends Level {
 
         this.meteors.forEach((meteor) => meteor.update(deltaTime));
 
-        this.characters.forEach((character) => character.update(this.game.inputHandler, deltaTime));
+        this.characters.forEach((character) => character.update(this.game.inputHandler, deltaTime,this));
 
         this.characters.forEach((character) => {
             if ( this.checkCollision(character, this.treasure)) {
@@ -179,7 +172,7 @@ export class LevelTreasureHunt extends Level {
         this.tiles = [];
         for (let i = 0; i < 24; i++) {
             const row : Tile[]=[];
-            for (let j = 0; j < 40; j++) {
+            for (let j = 0; j < 43; j++) {
                 console.log(ddddddd[i][j])
                 if (ddddddd[i][j]==1) {
                     row.push(new Tile(j * 32, i * 32, "green"));
@@ -193,4 +186,14 @@ export class LevelTreasureHunt extends Level {
 
         return ddddddd;
     }
+
+    isPositionPassable(x: number, y: number): boolean {
+        const tileX = Math.floor(x / this.tileSize);
+        const tileY = Math.floor(y / this.tileSize);
+        if (this.tiles[tileY] && this.tiles[tileY][tileX]) {
+            return this.tiles[tileY][tileX].isPassable;
+        }
+        return false;
+    }
+
 }

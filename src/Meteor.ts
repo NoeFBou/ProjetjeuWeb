@@ -31,8 +31,8 @@ export class Meteor {
 
         // Position d'impact aléatoire sur le canvas
         this.targetPosition = {
-            x: Math.random() * (canvasWidth - this.size),
-            y: Math.random() * (canvasHeight - this.size)
+            x: Math.random() * (canvasWidth - this.size-16),
+            y: Math.random() * (canvasHeight - this.size-16)
         };
 
         // Calcul de la durée de la chute basée sur la vitesse et la distance

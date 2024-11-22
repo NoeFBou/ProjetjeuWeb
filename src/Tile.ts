@@ -8,12 +8,15 @@ export class Tile {
     isHole: boolean;
     sprite: Sprite;
     type:string;
-    constructor(x: number, y: number,type:string, hole:boolean=false) {
+    isPassable: boolean;
+
+    constructor(x: number, y: number,type:string, hole:boolean=false,isPassable: boolean = true) {
         this.position = { x, y };
         this.damageLevel = 0;
         this.isHole = hole;
         this.type = type;
         this.sprite = new Sprite('assets/images/tileset.png', 1, 1000, ['normal']);
+        this.isPassable = isPassable;
     }
 
     /**
@@ -26,6 +29,8 @@ export class Tile {
             // Changez le sprite pour représenter un trou si nécessaire
         }
     }
+
+
 
     /**
      * Répare la tuile en diminuant son niveau de dégâts.

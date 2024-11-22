@@ -9,6 +9,9 @@ export abstract class Level {
         this.characters = characters;
     }
 
+
+
+
     /**
      * Met à jour l'état du niveau.
      * @param deltaTime Temps écoulé depuis la dernière mise à jour en millisecondes.
@@ -20,4 +23,6 @@ export abstract class Level {
      * @param context Le contexte de rendu du canvas.
      */
     abstract draw(context: CanvasRenderingContext2D): void;
+
+    abstract isPositionPassable(newX: number, newY: number): boolean;
 }

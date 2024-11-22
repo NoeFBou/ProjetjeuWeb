@@ -1,5 +1,6 @@
 import {Sprite} from "./Sprite.ts";
 import {InputHandler} from "./InputHandler.ts";
+import {Level} from "./Level.ts";
 
 export class CaraPlayer {
   public position: { x: number; y: number };
@@ -23,7 +24,7 @@ export class CaraPlayer {
   }
 
 
-  update(inputHandler: InputHandler, deltaTime: number) {
+  update(inputHandler: InputHandler, deltaTime: number, level: Level) {
     let dx = 0;
     let dy = 0;
 
@@ -31,6 +32,13 @@ export class CaraPlayer {
     if (inputHandler.isKeyPressed(this.key[1])) dx += this.speed; //droite
     if (inputHandler.isKeyPressed(this.key[2])) dy -= this.speed; //haut
     if (inputHandler.isKeyPressed(this.key[3])) dy += this.speed; //bas
+    const newX = this.position.x + dx;
+    const newY = this.position.y + dy;
+
+    if (level.isPositionPassable(newX, newY)) {
+      this.position.x = newX;
+      this.position.y = newY;
+    }
     if (this.position.x + dx < 0) dx = 0;
     else if (this.position.x + dx > 1400 - this.size) dx = 1400-this.size;
     else this.position.x += dx;
