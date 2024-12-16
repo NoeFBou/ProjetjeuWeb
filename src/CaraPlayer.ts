@@ -8,12 +8,16 @@ export class CaraPlayer {
   public key : string[];
   public direction: string;
   sprite: Sprite;
-  speed: number = 4;
+  speed: number = 3;
   public score: number = 0;
   size = 40;
   respawnPosition: { x: number; y: number };
   isRespawn : boolean;
   respawnTime=0;
+  lives : number;
+  private isVisible: boolean;
+  private timeSinceLastBlink: number;
+  private blinkInterval: number;
 
   constructor(sprite: Sprite, key: string[]) {
     this.position = { x:0, y:0 };
@@ -22,6 +26,11 @@ export class CaraPlayer {
     this.key = key;
     this.respawnPosition = { x:0, y:0 };
     this.isRespawn=false;
+    this.lives = 3;
+    this.blinkInterval = 100; // temps entre deux "switch" de visibilité
+    this.timeSinceLastBlink = 0;
+    this.isVisible = true;
+
   }
 
   public setPosition(x: number, y: number) {
@@ -75,8 +84,17 @@ export class CaraPlayer {
     this.setDirection(dx, dy);
     if(this.isRespawn) {
       this.respawnTime -= deltaTime;
-      if(this.respawnTime <=0)
-        this.isRespawn=false;
+      this.timeSinceLastBlink += deltaTime;
+
+      // Alterner la visibilité toutes les blinkInterval ms
+      if (this.timeSinceLastBlink > this.blinkInterval) {
+        this.isVisible = !this.isVisible;
+        this.timeSinceLastBlink = 0;
+      }
+      if(this.respawnTime <=0) {
+        this.isRespawn = false;
+        this.isVisible = true;
+      }
     }
 
 
@@ -98,13 +116,35 @@ export class CaraPlayer {
     //drawn square
     //context.fillStyle = 'red';
     //context.fillRect(this.position.x+8, this.position.y+10, this.size, this.size);
-    this.sprite.render(context, this.position.x-12, this.position.y-25);
+    if (this.isVisible)
+      this.sprite.render(context, this.position.x-12, this.position.y-25);
   }
 
+  drawPanel(context: CanvasRenderingContext2D,panelX:number,panelY:number) {
+    //drawn square
+    //context.fillStyle = 'red';
+    //context.fillRect(this.position.x+8, this.position.y+10, this.size, this.size);
+    this.sprite.render(context, panelX, panelY);
+    context.fillText(`Vie ${this.lives }:`,panelX, panelY+90);
+  }
 
   static createCaraPlayer(sprite: Sprite, key: string[]) {
       return new CaraPlayer(sprite, key);
   }
+
+  takeDamage(amount: number) {
+    if(!this.isRespawn) {
+      this.lives -= amount;
+      if (this.lives <= 0) {
+        this.respawn();
+      } else {
+        this.isRespawn = true;
+        this.respawnTime = 500;
+      }
+    }
+  }
+
+
   getIsRespawn():boolean{
     return this.isRespawn;
   }
@@ -114,6 +154,7 @@ export class CaraPlayer {
     this.position.y = this.respawnPosition.y;
     this.isRespawn=true;
     this.respawnTime=1000;
+    this.lives=3;
   }
 
 

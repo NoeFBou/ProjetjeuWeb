@@ -1,7 +1,7 @@
-import {Level} from "./Level.ts";
-import {Tile} from "./Tile.ts";
-import {Game} from "./Game.ts";
-import {CaraPlayer} from "./CaraPlayer.ts";
+/*import {Level} from "../Level.ts";
+import {Tile} from "../Tile.ts";
+import {Game} from "../Game.ts";
+import {CaraPlayer} from "../CaraPlayer.ts";
 
 export class LevelSurvive extends Level {
 
@@ -198,4 +198,4 @@ export class LevelSurvive extends Level {
         }
         return false;
     }
-}
+}*/

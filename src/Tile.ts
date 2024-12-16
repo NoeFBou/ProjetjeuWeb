@@ -20,9 +20,19 @@ export class Tile {
         this.isTrap = isTrap;
     }
 
-    /**
-     * Applique des dégâts à la tuile.
-     */
+    update(deltaTime: number): void {
+
+        this.sprite.update(deltaTime, 'static');
+
+    }
+
+    draw(context: CanvasRenderingContext2D): void {
+        this.sprite.render(context, this.position.x, this.position.y);
+
+
+    }
+
+    /*
     damage(): void {
         this.damageLevel += 1;
         if (this.damageLevel >= 3) {
@@ -30,17 +40,6 @@ export class Tile {
             // Changez le sprite pour représenter un trou si nécessaire
         }
     }
-    update(deltaTime: number): void {
-
-        this.sprite.update(deltaTime, 'static');
-
-    }
-
-
-
-    /**
-     * Répare la tuile en diminuant son niveau de dégâts.
-     */
     repair(): void {
         if (this.damageLevel > 0) {
             this.damageLevel -= 1;
@@ -48,15 +47,5 @@ export class Tile {
                 this.isHole = false;
             }
         }
-    }
-
-    /**
-     * Dessine la tuile sur le canvas.
-     * @param context Le contexte de rendu du canvas.
-     */
-    draw(context: CanvasRenderingContext2D): void {
-        this.sprite.render(context, this.position.x, this.position.y);
-
-
-    }
+    }*/
 }

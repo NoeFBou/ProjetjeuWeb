@@ -8,6 +8,8 @@ import { Sprite } from './Sprite';
 import { Tile } from './Tile';
 import {CaraPlayer} from "./CaraPlayer.ts";
 import {LightningAnimation} from "./entity/LightningAnimation.ts";
+import {BoulleElectrique} from "./entity/BoulleElectrique.ts";
+import { SerpentGeant } from './entity/SerpentGeant.ts';
 
 export class LevelTreasureHunt extends Level {
     treasure: Treasure;
@@ -21,11 +23,14 @@ export class LevelTreasureHunt extends Level {
     grid: number[][];
     spriteTuile: Sprite;
     meteorSprite: Sprite;
+    boullElectriqueSprite: Sprite;
     meteorsStart: number;
     treasurePosition: { x: number; y: number };
-    playerPosition:[];
+    playerPosition:[{ x: number; y: number }];
     trapTiles: {x:number,y:number,interval:number,nextTime:number,"type": string,active:boolean,duration:number}[];
     effects: LightningAnimation[];
+    electricBalls: BoulleElectrique[];
+    serpentGeants: SerpentGeant[];
 
     constructor(characters: CaraPlayer[], game: Game, levelData: any) {
         super(characters);
@@ -40,17 +45,32 @@ export class LevelTreasureHunt extends Level {
         this.trapTiles = levelData.pieges;
         this.meteorsStart = levelData.meteorsStart;
         this.effects = [];
+
+        this.electricBalls = [];
+
+        const electricBalls = levelData.boulleElectrique;
+
+
+
         this.initCharactersPosition(levelData.playerPosition );
-        this.loadAssets();
+        this.loadAssets(electricBalls);
         this.treasurePosition = { x:levelData.treasurePosition.x*64, y:levelData.treasurePosition.y*64 };
         this.playerPosition = levelData.playerPosition;
+        this.serpentGeants = [];
+        for (let i = 0; i < levelData.monstreGeant; i++) {
+
+            this.serpentGeants.push(new SerpentGeant(Math.floor(Math.random() * (this.game.canvas.width - 128)), Math.floor(Math.random() * (this.game.canvas.height - 96))));
+        }
+
+
 
     }
 
-    loadAssets():void{
+    loadAssets(electricBalls: [{x:number,y :number,waypoints:[],speed:number}]):void{
         const treasureSprite = new Sprite('src/assets/portail.png', 6, 100, ['static']);
         this.meteorSprite = new Sprite('src/assets/entity/potion.png', 4, 100, ['static']);
-        this.spriteTuile = new Sprite('src/assets/labo/tuile.png', 1, 100, ['static']);
+        this.spriteTuile = new Sprite('src/assets/labo/tuile.png', 1, 100, ['static'])
+        this.boullElectriqueSprite = new Sprite('src/assets/entity/boulleElectrique.png', 8, 100, ['static']);
         let spriteLMur1 = new Sprite('src/assets/labo/mur1.png', 1, 100, ['static']);
         let spriteLMur12 = new Sprite('src/assets/labo/mur12.png', 1, 100, ['static']);
         let spriteLMur13 = new Sprite('src/assets/labo/mur13.png', 1, 100, ['static']);
@@ -128,6 +148,16 @@ export class LevelTreasureHunt extends Level {
             for (let i = 0; i < this.meteorsStart; i++) {
                 this.spawnMeteor(this.meteorSprite);
             }
+            for (let i = 0; i < electricBalls.length; i++)
+                this.electricBalls.push(
+                    new BoulleElectrique(
+                        electricBalls[i].x,
+                        electricBalls[i].y,
+                        electricBalls[i].waypoints,
+                        electricBalls[i].speed,
+                        this.boullElectriqueSprite
+                    ));
+            console.log(this.electricBalls);
             this.loading = false;
         }).catch(err => {
             console.error("Erreur lors du chargement des images: ", err);
@@ -137,7 +167,7 @@ export class LevelTreasureHunt extends Level {
     /**
      * Initialise les positions des personnages.
      */
-    initCharactersPosition(playerPosition: []): void {
+    initCharactersPosition(playerPosition: [{x:number,y:number}]): void {
         for (let i = 0; i < this.characters.length; i++) {
             this.characters[i].setPosition(playerPosition[i].x, playerPosition[i].y);
             this.characters[i].respawnPosition = { x: playerPosition[i].x, y: playerPosition[i].y }; // Pour respawn en cas d'impact
@@ -161,10 +191,12 @@ export class LevelTreasureHunt extends Level {
         }
 
         this.meteors.forEach((meteor) => meteor.update(deltaTime));
-
+        this.electricBalls.forEach((ball) => ball.update(deltaTime));
         this.characters.forEach((character) => character.update(this.game.inputHandler, deltaTime,this));
+        this.serpentGeants.forEach((serpent) =>
+            serpent.update(deltaTime, this.game.canvas.width-128, this.game.canvas.height-96)
 
-
+        );
 
         this.characters.forEach((character) => {
             if ( this.checkCollision(character, this.treasure)) {
@@ -177,12 +209,18 @@ export class LevelTreasureHunt extends Level {
             if (meteor.hasImpacted()) {
                 this.characters.forEach((character) => {
                     if (!character.getIsRespawn() && this.checkCollision(character, meteor)) {
-                        character.respawn();
+                        character.takeDamage(1);
                     }
                 });
             }
         });
-
+        this.electricBalls.forEach((ball) => {
+            this.characters.forEach((character) => {
+                if (this.checkCollision(character, ball)) {
+                    character.takeDamage(1);
+                }
+            });
+        })
 
         this.meteors = this.meteors.filter((meteor) => meteor.isActive);
 
@@ -224,6 +262,15 @@ export class LevelTreasureHunt extends Level {
         });
 
 
+        for (const character of this.characters) {
+            for (const serpent of this.serpentGeants) {
+                if ( !character.isRespawn && serpent.collidesWith(character)) {
+                    character.takeDamage(2);
+                }
+            }
+
+        }
+
         for (let effect of this.effects) {
             effect.update(deltaTime);
         }
@@ -250,9 +297,10 @@ export class LevelTreasureHunt extends Level {
         this.meteors.forEach((meteor) => meteor.draw(context));
 
         this.treasure.draw(context);
+        this.electricBalls.forEach((ball) => ball.draw(context));
 
         this.characters.forEach((character) => character.draw(context));
-
+        this.serpentGeants.forEach((serpent) => serpent.draw(context));
         this.drawScores(context);
 
         for (let effect of this.effects) {
@@ -286,15 +334,21 @@ export class LevelTreasureHunt extends Level {
      * @param context Le contexte de rendu du canvas.
      */
     drawScores(context: CanvasRenderingContext2D): void {
-        context.fillStyle = 'red';
+        context.fillStyle = 'white';
         context.font = '20px Arial';
-        let yOffset = 20;
+        let yOffset = 50;
         this.characters.forEach((character, index) => {
             const score = character.score;
-            context.fillText(`Joueur ${index + 1}: ${score} points`, 10, yOffset);
-            yOffset += 25;
+            context.fillText(`Joueur ${index + 1}:`,1290, yOffset);
+            if (score === 0)
+                context.fillText(` ${score} point`,1290, yOffset+40);
+            else
+                context.fillText(` ${score} points`,1290, yOffset+40);
+            character.drawPanel(context, 1300, yOffset+50);
+            yOffset += 180;
         });
     }
+
 
     buildTiles(dico: { [key: string]: Sprite }, spriteTuile: Sprite) {        //array 24 * 32 of 0
 

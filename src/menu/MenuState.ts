@@ -40,17 +40,13 @@ export class MenuState {
                 this.currentStep = 'playersAllAtOnce';
             }
         } else if (this.currentStep === 'playersAllAtOnce') {
-            // Mettre à jour chaque menu joueur en même temps
             for (let i = 0; i < this.numberOfPlayers; i++) {
                 const pm = this.playerMenus[i];
-                // pm.update prend maintenant aussi le set de touches du joueur
                 const playerKeys = this.playerConfigs[i].keys;
                 pm.update(deltaTime, this.game.inputHandler, playerKeys);
             }
 
-            // Vérifier si tous les joueurs sont prêts
             if (this.playerMenus.every(pm => pm.isReady)) {
-                // Passer à la validation
                 this.currentStep = 'validation';
             }
         } else if (this.currentStep === 'validation') {
@@ -61,6 +57,8 @@ export class MenuState {
                         new Sprite(`../src/assets/skin/${pm.playerConfig.skin}`, 9, 100, this.direction),
                         pm.playerConfig.keys);
                 }
+                this.game.populateLevelSelect();
+
                 this.game.startNewLevel();
             } else {
                 this.errorMessage = "Skins ou touches en doublon, veuillez changer vos configurations!";
@@ -76,7 +74,6 @@ export class MenuState {
             context.fillStyle = 'black';
             context.fillRect(0,0,this.game.canvas.width,this.game.canvas.height);
 
-            // Afficher tous les menus joueurs simultanément
             const spacing = 300; // espace horizontal entre chaque menu
             for (let i = 0; i < this.numberOfPlayers; i++) {
                 context.save();
@@ -94,7 +91,6 @@ export class MenuState {
     }
 
     isValidConfiguration(): boolean {
-        // Même logique qu'avant
         const skins = this.playerConfigs.map(p => p.skin);
         const uniqueSkins = new Set(skins);
         if (uniqueSkins.size < skins.length) return false;
