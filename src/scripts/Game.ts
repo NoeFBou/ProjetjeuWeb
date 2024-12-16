@@ -42,7 +42,7 @@ export class Game {
     }
 
     async loadAndStart() {
-        const response = await fetch('src/assets/LevelData.json');
+        const response = await fetch('/assets/data/LevelData.json');
         this.levels = await response.json();
         this.currentLevel = new MenuState(this);
         requestAnimationFrame(this.gameLoop.bind(this));
@@ -59,6 +59,7 @@ export class Game {
     }
 
     startNewLevel() {
+        // @ts-ignore
         const levelData = this.levels.levels[this.currentLevelIndex];
 
 
@@ -91,6 +92,7 @@ export class Game {
 
         select.innerHTML = '';
 
+        // @ts-ignore
         this.levels.levels.forEach((levelData, index) => {
             const option = document.createElement('option');
             option.value = index.toString();

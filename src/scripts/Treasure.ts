@@ -1,4 +1,4 @@
-import { Sprite } from './Sprite';
+import { Sprite } from './Sprite.ts';
 
 export class Treasure {
     public position: { x: number; y: number };

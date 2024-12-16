@@ -1,11 +1,11 @@
 // src/LevelTypeOne.ts
 
-import { Level } from './Level';
+import { Level } from './Level.ts';
 import { Game } from './Game.ts';
-import { Treasure } from './Treasure';
+import { Treasure } from './Treasure.ts';
 import { Meteor } from './entity/Meteor.ts';
-import { Sprite } from './Sprite';
-import { Tile } from './Tile';
+import { Sprite } from './Sprite.ts';
+import { Tile } from './Tile.ts';
 import {CaraPlayer} from "./CaraPlayer.ts";
 import {LightningAnimation} from "./entity/LightningAnimation.ts";
 import {BoulleElectrique} from "./entity/BoulleElectrique.ts";
@@ -261,42 +261,42 @@ export class LevelTreasureHunt extends Level {
     }
 
     private loadAssets(electricBalls: [{ x: number; y: number; waypoints: []; speed: number }], itemP: any):void{
-        const treasureSprite = new Sprite('src/assets/portail.png', 6, 100, ['static']);
-        const potionRouge = new Sprite('src/assets/entity/potionrouge.png', 4, 100, ['static']);
-        const potionBleu = new Sprite('src/assets/entity/potionbleu.png', 4, 100, ['static']);
+        const treasureSprite = new Sprite('/assets/labo/portail.png', 6, 100, ['static']);
+        const potionRouge = new Sprite('/assets/entity/potionrouge.png', 4, 100, ['static']);
+        const potionBleu = new Sprite('/assets/entity/potionbleu.png', 4, 100, ['static']);
 
-        this.meteorSprite = new Sprite('src/assets/entity/potion.png', 4, 100, ['static']);
-        this.spriteTuile = new Sprite('src/assets/labo/tuile.png', 1, 100, ['static'])
-        this.boullElectriqueSprite = new Sprite('src/assets/entity/boulleElectrique.png', 8, 100, ['static']);
-        let spriteLMur1 = new Sprite('src/assets/labo/mur1.png', 1, 100, ['static']);
-        let spriteLMur12 = new Sprite('src/assets/labo/mur12.png', 1, 100, ['static']);
-        let spriteLMur13 = new Sprite('src/assets/labo/mur13.png', 1, 100, ['static']);
-        let spriteLMur14 = new Sprite('src/assets/labo/mur14.png', 1, 100, ['static']);
-        let spriteLMur2 = new Sprite('src/assets/labo/mur2.png', 1, 100, ['static']);
-        let spriteLMur23 = new Sprite('src/assets/labo/mur23.png', 1, 100, ['static']);
-        let spriteLMur24 = new Sprite('src/assets/labo/mur24.png', 1, 100, ['static']);
-        let spriteLMur3 = new Sprite('src/assets/labo/mur3.png', 1, 100, ['static']);
-        let spriteLMur34 = new Sprite('src/assets/labo/mur34.png', 1, 100, ['static']);
-        let spriteLMur4 = new Sprite('src/assets/labo/mur4.png', 1, 100, ['static']);
-        let spriteLMur123 = new Sprite('src/assets/labo/mur123.png', 1, 100, ['static']);
-        let spriteLMur124 = new Sprite('src/assets/labo/mur124.png', 1, 100, ['static']);
-        let spriteLMur134 = new Sprite('src/assets/labo/mur134.png', 1, 100, ['static']);
-        let spriteLMur234 = new Sprite('src/assets/labo/mur234.png', 1, 100, ['static']);
-        let spriteLMur1234 = new Sprite('src/assets/labo/mur1234.png', 1, 100, ['static']);
-        let spriteLMur21 = new Sprite('src/assets/labo/mur21.png', 1, 100, ['static']);
-        let spriteLMur42 = new Sprite('src/assets/labo/mur42.png', 1, 100, ['static']);
-        let spriteLMur31 = new Sprite('src/assets/labo/mur31.png', 1, 100, ['static']);
-        let spriteLMur43 = new Sprite('src/assets/labo/mur43.png', 1, 100, ['static']);
-        let trou = new Sprite('src/assets/labo/trou.png', 6, 10000, ['static']);
-        let trou1 = new Sprite('src/assets/labo/trou1.png', 6, 10000, ['static']);
-        let trou2 = new Sprite('src/assets/labo/trou2.png', 6, 10000, ['static']);
-        let trou3 = new Sprite('src/assets/labo/trou3.png', 6, 10000, ['static']);
-        let trou4 = new Sprite('src/assets/labo/trou4.png', 6, 10000, ['static']);
-        let trou12 = new Sprite('src/assets/labo/trou12.png', 6, 10000, ['static']);
-        let trou13 = new Sprite('src/assets/labo/trou13.png', 6, 10000, ['static']);
-        let trou24 = new Sprite('src/assets/labo/trou24.png', 6, 10000, ['static']);
-        let trou34 = new Sprite('src/assets/labo/trou34.png', 6, 10000, ['static']);
-        let trou1234 = new Sprite('src/assets/labo/trou1234.png', 6, 10000, ['static']);
+        this.meteorSprite = new Sprite('/assets/entity/potion.png', 4, 100, ['static']);
+        this.spriteTuile = new Sprite('/assets/labo/tuile.png', 1, 100, ['static'])
+        this.boullElectriqueSprite = new Sprite('/assets/entity/boulleElectrique.png', 8, 100, ['static']);
+        let spriteLMur1 = new Sprite('/assets/labo/mur1.png', 1, 100, ['static']);
+        let spriteLMur12 = new Sprite('/assets/labo/mur12.png', 1, 100, ['static']);
+        let spriteLMur13 = new Sprite('/assets/labo/mur13.png', 1, 100, ['static']);
+        let spriteLMur14 = new Sprite('/assets/labo/mur14.png', 1, 100, ['static']);
+        let spriteLMur2 = new Sprite('/assets/labo/mur2.png', 1, 100, ['static']);
+        let spriteLMur23 = new Sprite('/assets/labo/mur23.png', 1, 100, ['static']);
+        let spriteLMur24 = new Sprite('/assets/labo/mur24.png', 1, 100, ['static']);
+        let spriteLMur3 = new Sprite('/assets/labo/mur3.png', 1, 100, ['static']);
+        let spriteLMur34 = new Sprite('/assets/labo/mur34.png', 1, 100, ['static']);
+        let spriteLMur4 = new Sprite('/assets/labo/mur4.png', 1, 100, ['static']);
+        let spriteLMur123 = new Sprite('/assets/labo/mur123.png', 1, 100, ['static']);
+        let spriteLMur124 = new Sprite('/assets/labo/mur124.png', 1, 100, ['static']);
+        let spriteLMur134 = new Sprite('/assets/labo/mur134.png', 1, 100, ['static']);
+        let spriteLMur234 = new Sprite('/assets/labo/mur234.png', 1, 100, ['static']);
+        let spriteLMur1234 = new Sprite('/assets/labo/mur1234.png', 1, 100, ['static']);
+        let spriteLMur21 = new Sprite('/assets/labo/mur21.png', 1, 100, ['static']);
+        let spriteLMur42 = new Sprite('/assets/labo/mur42.png', 1, 100, ['static']);
+        let spriteLMur31 = new Sprite('/assets/labo/mur31.png', 1, 100, ['static']);
+        let spriteLMur43 = new Sprite('/assets/labo/mur43.png', 1, 100, ['static']);
+        let trou = new Sprite('/assets/labo/trou.png', 6, 10000, ['static']);
+        let trou1 = new Sprite('/assets/labo/trou1.png', 6, 10000, ['static']);
+        let trou2 = new Sprite('/assets/labo/trou2.png', 6, 10000, ['static']);
+        let trou3 = new Sprite('/assets/labo/trou3.png', 6, 10000, ['static']);
+        let trou4 = new Sprite('/assets/labo/trou4.png', 6, 10000, ['static']);
+        let trou12 = new Sprite('/assets/labo/trou12.png', 6, 10000, ['static']);
+        let trou13 = new Sprite('/assets/labo/trou13.png', 6, 10000, ['static']);
+        let trou24 = new Sprite('/assets/labo/trou24.png', 6, 10000, ['static']);
+        let trou34 = new Sprite('/assets/labo/trou34.png', 6, 10000, ['static']);
+        let trou1234 = new Sprite('/assets/labo/trou1234.png', 6, 10000, ['static']);
 
         const dico :{ [key: string]: Sprite }= {
             1: spriteLMur1,

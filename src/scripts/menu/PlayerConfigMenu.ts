@@ -59,7 +59,7 @@ export class PlayerConfigMenu {
     }
 
     loadSkinImage(skinPath: string) {
-        this.skinImage.src = `../src/assets/skin/${skinPath}`;
+        this.skinImage.src = `../assets/skin/${skinPath}`;
         this.skinImage.onload = () => {
             this.skinImageLoaded = true;
         }

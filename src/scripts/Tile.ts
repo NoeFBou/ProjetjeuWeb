@@ -1,5 +1,5 @@
 // src/Tile.ts
-import { Sprite } from './Sprite';
+import { Sprite } from './Sprite.ts';
 
 export class Tile {
     public position: { x: number; y: number };

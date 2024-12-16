@@ -14,7 +14,7 @@ export class LightningAnimation {
         this.x = x;
         this.y = y;
         this.image = new Image();
-        this.image.src = 'src/assets/entity/trap.png';
+        this.image.src = '/assets/entity/trap.png';
         this.frameCount = 12;
         this.frameWidth = 64;
         this.frameHeight = 64;

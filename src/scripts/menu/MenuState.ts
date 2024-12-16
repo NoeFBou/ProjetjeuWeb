@@ -54,7 +54,7 @@ export class MenuState {
                 for (let i = 0; i < this.numberOfPlayers; i++) {
                     const pm = this.playerMenus[i];
                     this.game.addCaraPlayer(
-                        new Sprite(`../src/assets/skin/${pm.playerConfig.skin}`, 9, 100, this.direction),
+                        new Sprite(`/assets/skin/${pm.playerConfig.skin}`, 9, 100, this.direction),
                         pm.playerConfig.keys);
                 }
                 this.game.populateLevelSelect();

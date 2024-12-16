@@ -1,6 +1,6 @@
 // src/Level.ts
 
-import { CaraPlayer } from './CaraPlayer';
+import { CaraPlayer } from './CaraPlayer.ts';
 
 export abstract class Level {
     characters: CaraPlayer[];

@@ -19,8 +19,8 @@ export class Meteor  extends Entity  {
 
     constructor(canvasWidth: number, canvasHeight: number, sprite: Sprite, Level: Level) {
         super(canvasWidth, canvasHeight, sprite, 500, 32, {x: Math.random() * (canvasWidth - 32), y: -32}, true);
-        this.spritePoison = new Sprite('src/assets/entity/poison.png', 6, 100, ['static']);
-        this.spriteTarget = new Sprite('src/assets/entity/target.png', 8, 50, ['static']);
+        this.spritePoison = new Sprite('/assets/entity/poison.png', 6, 100, ['static']);
+        this.spriteTarget = new Sprite('/assets/entity/target.png', 8, 50, ['static']);
 
         this.targetPosition = { x: 0, y: 0 };
         const maxAttempts = 100;
@@ -76,6 +76,7 @@ export class Meteor  extends Entity  {
                 this.targetPosition.y - this.position.y
             ) / this._speed) * 1000;
 
+            // @ts-ignore
             const progress = 1 - this.impactTime / totalTime;
 
             // Met à jour la position en fonction de la progression
