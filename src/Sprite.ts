@@ -1,51 +1,43 @@
 export class Sprite {
-    image: HTMLImageElement;
-    framesPerDirection: number;
-    currentFrame: number;
-    timeSinceLastFrame: number;
-    frameInterval: number;
+    private _image: HTMLImageElement;
+    private _framesPerDirection: number;
+    private _currentFrame: number;
+    private _timeSinceLastFrame: number;
+    private _frameInterval: number;
     directions: string[];
     currentDirectionIndex: number;
 
     constructor(imageSrc: string, framesPerDirection: number, frameInterval: number, directions: string[]) {
-        this.image = new Image();
-        this.image.src = imageSrc;
-        this.framesPerDirection = framesPerDirection;
-        this.currentFrame = 0;
-        this.timeSinceLastFrame = 0;
-        this.frameInterval = frameInterval;
+        this._image = new Image();
+        this._image.src = imageSrc;
+        this._framesPerDirection = framesPerDirection;
+        this._currentFrame = 0;
+        this._timeSinceLastFrame = 0;
+        this._frameInterval = frameInterval;
         this.directions = directions;
         this.currentDirectionIndex = 0;
-        this.image.onload = () => {
-            //console.log("");
+        this._image.onload = () => {
         }
     }
 
-    load(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.image.onload = () => resolve();
-            this.image.onerror = () => reject(new Error(`Impossible de charger l'image : ${this.image.src}`));
-        });
-    }
+    public update(deltaTime: number, direction: string) {
+        this._timeSinceLastFrame += deltaTime;
 
-    update(deltaTime: number, direction: string) {
-        this.timeSinceLastFrame += deltaTime;
-
-        if (this.timeSinceLastFrame > this.frameInterval) {
-            this.currentFrame = (this.currentFrame + 1) % this.framesPerDirection;
-            this.timeSinceLastFrame = 0;
+        if (this._timeSinceLastFrame > this._frameInterval) {
+            this._currentFrame = (this._currentFrame + 1) % this._framesPerDirection;
+            this._timeSinceLastFrame = 0;
         }
 
         this.currentDirectionIndex = this.directions.indexOf(direction);
     }
 
-    render(context: CanvasRenderingContext2D, x: number, y: number) {
-        const frameWidth = this.image.width / this.framesPerDirection;
-        const frameHeight = this.image.height / this.directions.length;
+    public render(context: CanvasRenderingContext2D, x: number, y: number) {
+        const frameWidth = this._image.width / this._framesPerDirection;
+        const frameHeight = this._image.height / this.directions.length;
 
         context.drawImage(
-            this.image,
-            this.currentFrame * frameWidth,
+            this._image,
+            this._currentFrame * frameWidth,
             this.currentDirectionIndex * frameHeight,
             frameWidth,
             frameHeight,
@@ -55,4 +47,15 @@ export class Sprite {
             frameHeight
         );
     }
+
+    public load(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this._image.onload = () => resolve();
+            this._image.onerror = () => reject(new Error(`Impossible de charger l'image : ${this._image.src}`));
+        });
+    }
+
+
+
+
 }

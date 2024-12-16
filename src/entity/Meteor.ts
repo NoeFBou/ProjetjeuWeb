@@ -23,7 +23,6 @@ export class Meteor  extends Entity  {
         this.spriteTarget = new Sprite('src/assets/entity/target.png', 8, 50, ['static']);
 
         this.targetPosition = { x: 0, y: 0 };
-        // Position d'impact aléatoire sur le canvas
         const maxAttempts = 100;
         let attempts = 0;
         let validPositionFound = false;
@@ -48,7 +47,6 @@ export class Meteor  extends Entity  {
             this.targetPosition = { x: 0, y: 0 };
         }
 
-        // Calcul de la durée de la chute basée sur la vitesse et la distance
         const distance = Math.hypot(
             this.targetPosition.x - this.position.x,
             this.targetPosition.y - this.position.y

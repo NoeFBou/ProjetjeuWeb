@@ -12,7 +12,6 @@ import {BoulleElectrique} from "./entity/BoulleElectrique.ts";
 import { SerpentGeant } from './entity/SerpentGeant.ts';
 
 export class LevelTreasureHunt extends Level {
-    treasure: Treasure;
     meteors: Meteor[];
     meteorTimer: number;
     meteorInterval: number;
@@ -21,9 +20,11 @@ export class LevelTreasureHunt extends Level {
     tileSize: number;
     loading: boolean;
     grid: number[][];
-    spriteTuile: Sprite;
-    meteorSprite: Sprite;
-    boullElectriqueSprite: Sprite;
+    spriteTuile!: Sprite;
+    meteorSprite!: Sprite;
+    boullElectriqueSprite!: Sprite;
+    treasure!: Treasure;
+
     meteorsStart: number;
     treasurePosition: { x: number; y: number };
     playerPosition:[{ x: number; y: number }];
@@ -45,12 +46,9 @@ export class LevelTreasureHunt extends Level {
         this.trapTiles = levelData.pieges;
         this.meteorsStart = levelData.meteorsStart;
         this.effects = [];
-
         this.electricBalls = [];
 
         const electricBalls = levelData.boulleElectrique;
-
-
 
         this.initCharactersPosition(levelData.playerPosition );
         this.loadAssets(electricBalls);
@@ -58,15 +56,195 @@ export class LevelTreasureHunt extends Level {
         this.playerPosition = levelData.playerPosition;
         this.serpentGeants = [];
         for (let i = 0; i < levelData.monstreGeant; i++) {
-
             this.serpentGeants.push(new SerpentGeant(Math.floor(Math.random() * (this.game.canvas.width - 128)), Math.floor(Math.random() * (this.game.canvas.height - 96))));
         }
+    }
 
 
+    public update(deltaTime: number): void {
+
+        if (this.loading) return;
+
+        // Met à jour le timer des météorites
+        this.meteorTimer += deltaTime;
+        if (this.meteorTimer > this.meteorInterval) {
+            this.spawnMeteor(this.meteorSprite);
+            this.meteorTimer = 0;
+        }
+
+        this.meteors.forEach((meteor) => meteor.update(deltaTime));
+        this.electricBalls.forEach((ball) => ball.update(deltaTime));
+        this.characters.forEach((character) => character.update(this.game.inputHandler, deltaTime,this));
+        this.serpentGeants.forEach((serpent) => serpent.update(this.game.canvas.width-128, this.game.canvas.height-96));
+        this.treasure.update(deltaTime);
+        for (let i = 0; i < this.tiles.length; i++) {
+            for (let j = 0; j < this.tiles[i].length; j++) {
+                this.tiles[i][j].update(deltaTime);
+            }
+        }
+        for (let effect of this.effects) {
+            effect.update(deltaTime);
+        }
+        this.effects = this.effects.filter(effect => !effect.finished);
+
+        this.characters.forEach((character) => {
+            if ( this.checkCollision(character, this.treasure)) {
+                character.score++;
+                this.game.endCurrentLevel();
+            }
+        });
+
+        this.meteors.forEach((meteor) => {
+            if (meteor.hasImpacted()) {
+                this.characters.forEach((character) => {
+                    if (this.checkCollision(character, meteor)) {
+                        character.takeDamage(1);
+                    }
+                });
+            }
+        });
+        this.meteors = this.meteors.filter((meteor) => meteor.isActive);
+
+        this.electricBalls.forEach((ball) => {
+            this.characters.forEach((character) => {
+                if (this.checkCollision(character, ball)) {
+                    character.takeDamage(1);
+                }
+            });
+        })
+
+        if (this.trapTiles)
+            for (let i = 0; i < this.trapTiles.length; i++) {
+                if (!this.trapTiles[i].active)
+                    this.trapTiles[i].nextTime += deltaTime;
+                if (!this.trapTiles[i].active && this.trapTiles[i].nextTime >= this.trapTiles[i].interval) {
+                    this.trapTiles[i].active = true;
+                    const lightning = new LightningAnimation(this.trapTiles[i].x*64, this.trapTiles[i].y*64);
+                    this.effects.push(lightning);
+                }
+                if (this.trapTiles[i].active ) {
+                    this.trapTiles[i].duration += deltaTime;
+                    this.activateTraps(i);
+                }
+                if (this.trapTiles[i].active && this.trapTiles[i].duration>1000) {
+                    this.scheduleNextTrap(i);
+                }
+            }
+        this.characters.forEach((character) => {
+            if (this.isCaraFall(character.getPosition(), character.size/2)) {
+                character.respawn();
+            }
+        });
+
+        for (const character of this.characters) {
+            for (const serpent of this.serpentGeants) {
+                if (serpent.collidesWith(character)) {
+                    character.takeDamage(2);
+                }
+            }
+
+        }
+    }
+
+    public draw(context: CanvasRenderingContext2D): void {
+        if (this.loading) {
+            this.drawLoadingMessage(context, "Chargement...");
+            return;
+        }
+
+        for (const row of this.tiles) {
+            for (const tile of row) {
+                tile.draw(context)
+            }
+        }
+        this.meteors.forEach((meteor) => meteor.draw(context));
+
+        this.treasure.draw(context);
+        this.electricBalls.forEach((ball) => ball.draw(context));
+
+        this.characters.forEach((character) => character.draw(context));
+        this.serpentGeants.forEach((serpent) => serpent.draw(context));
+        this.drawScores(context);
+
+        for (let effect of this.effects) {
+            effect.draw(context);
+        }
+    }
+
+    drawLoadingMessage(context: CanvasRenderingContext2D, message: string): void {
+        const { width, height } = this.game.canvas;
+        context.clearRect(0, 0, width, height);
+        context.fillStyle = 'black';
+        context.fillRect(0, 0, width, height);
+
+        context.fillStyle = 'white';
+        context.font = '30px Arial';
+        const textWidth = context.measureText(message).width;
+        context.fillText(message, (width - textWidth) / 2, height / 2);
+    }
+
+
+    public drawScores(context: CanvasRenderingContext2D): void {
+        context.fillStyle = 'white';
+        context.font = '20px Arial';
+        let yOffset = 50;
+        this.characters.forEach((character, index) => {
+            const score = character.score;
+            context.fillText(`Joueur ${index + 1}:`,1290, yOffset);
+            if (score === 0)
+                context.fillText(` ${score} point`,1290, yOffset+40);
+            else
+                context.fillText(` ${score} points`,1290, yOffset+40);
+            character.drawPanel(context, 1300, yOffset+50);
+            yOffset += 180;
+        });
+    }
+
+    public isPositionPassable(x: number, y: number, size :number): boolean {
+        for (let i = 0; i < this.tiles.length; i++) {
+            for (let j = 0; j < this.tiles[i].length; j++) {
+                const tile = this.tiles[i][j];
+                if (!tile.isPassable &&x < tile.position.x + 64 &&
+                    x + size > tile.position.x &&
+                    y < tile.position.y + 64 &&
+                    size+ y > tile.position.y) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    public isCaraFall(position: { x: number; y: number }, size: number) {
+        for (let i = 0; i < this.tiles.length; i++) {
+            for (let j = 0; j < this.tiles[i].length; j++) {
+                const tile = this.tiles[i][j];
+                if (tile.isHole && position.x < tile.position.x +8+ 48 &&
+                    position.x + size > tile.position.x+8 &&
+                    position.y < tile.position.y+8 + 48 &&
+                    size+ position.y > tile.position.y+8) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private spawnMeteor(meteorSprite: Sprite): void {
+        const meteor = new Meteor(20*64, 11*64, meteorSprite, this);
+        this.meteors.push(meteor);
+    }
+
+    private initCharactersPosition(playerPosition: [{x:number,y:number}]): void {
+        for (let i = 0; i < this.characters.length; i++) {
+            this.characters[i].setPosition(playerPosition[i].x, playerPosition[i].y);
+            this.characters[i].respawnPosition = { x: playerPosition[i].x, y: playerPosition[i].y }; // Pour respawn en cas d'impact
+        }
 
     }
 
-    loadAssets(electricBalls: [{x:number,y :number,waypoints:[],speed:number}]):void{
+    private loadAssets(electricBalls: [{x:number,y :number,waypoints:[],speed:number}]):void{
         const treasureSprite = new Sprite('src/assets/portail.png', 6, 100, ['static']);
         this.meteorSprite = new Sprite('src/assets/entity/potion.png', 4, 100, ['static']);
         this.spriteTuile = new Sprite('src/assets/labo/tuile.png', 1, 100, ['static'])
@@ -164,193 +342,18 @@ export class LevelTreasureHunt extends Level {
         });
     }
 
-    /**
-     * Initialise les positions des personnages.
-     */
-    initCharactersPosition(playerPosition: [{x:number,y:number}]): void {
-        for (let i = 0; i < this.characters.length; i++) {
-            this.characters[i].setPosition(playerPosition[i].x, playerPosition[i].y);
-            this.characters[i].respawnPosition = { x: playerPosition[i].x, y: playerPosition[i].y }; // Pour respawn en cas d'impact
-        }
-
-    }
-
-    /**
-     * Met à jour le niveau en gérant les météorites et les interactions des joueurs.
-     * @param deltaTime Le temps écoulé depuis la dernière mise à jour en millisecondes.
-     */
-    update(deltaTime: number): void {
-
-        if (this.loading) return;
-
-        // Met à jour le timer des météorites
-        this.meteorTimer += deltaTime;
-        if (this.meteorTimer > this.meteorInterval) {
-            this.spawnMeteor(this.meteorSprite);
-            this.meteorTimer = 0;
-        }
-
-        this.meteors.forEach((meteor) => meteor.update(deltaTime));
-        this.electricBalls.forEach((ball) => ball.update(deltaTime));
-        this.characters.forEach((character) => character.update(this.game.inputHandler, deltaTime,this));
-        this.serpentGeants.forEach((serpent) =>
-            serpent.update(deltaTime, this.game.canvas.width-128, this.game.canvas.height-96)
-
-        );
-
+    private activateTraps(i: number) {
         this.characters.forEach((character) => {
-            if ( this.checkCollision(character, this.treasure)) {
-                character.score++;
-                this.game.endCurrentLevel();
-            }
-        });
+            if (character.getPosition().x < this.trapTiles[i].x*64 +16 + 32 &&
+                character.getPosition().x + character.size > this.trapTiles[i].x*64 +16 &&
+                character.getPosition().y < this.trapTiles[i].y*64 + 64 &&
+                character.size+ character.getPosition().y > this.trapTiles[i].y*64)
+                character.respawn()
 
-        this.meteors.forEach((meteor) => {
-            if (meteor.hasImpacted()) {
-                this.characters.forEach((character) => {
-                    if (!character.getIsRespawn() && this.checkCollision(character, meteor)) {
-                        character.takeDamage(1);
-                    }
-                });
-            }
-        });
-        this.electricBalls.forEach((ball) => {
-            this.characters.forEach((character) => {
-                if (this.checkCollision(character, ball)) {
-                    character.takeDamage(1);
-                }
-            });
         })
-
-        this.meteors = this.meteors.filter((meteor) => meteor.isActive);
-
-        this.treasure.update(deltaTime);
-
-
-        for (let i = 0; i < this.tiles.length; i++) {
-            for (let j = 0; j < this.tiles[i].length; j++) {
-                this.tiles[i][j].update(deltaTime);
-            }
-        }
-
-        if (this.trapTiles)
-            for (let i = 0; i < this.trapTiles.length; i++) {
-                if (!this.trapTiles[i].active)
-                    this.trapTiles[i].nextTime += deltaTime;
-
-                if (!this.trapTiles[i].active && this.trapTiles[i].nextTime >= this.trapTiles[i].interval) {
-                    this.trapTiles[i].active = true;
-                    const lightning = new LightningAnimation(this.trapTiles[i].x*64, this.trapTiles[i].y*64);
-                    this.effects.push(lightning);
-                }
-
-                if (this.trapTiles[i].active ) {
-                    this.trapTiles[i].duration += deltaTime;
-                    this.activateTraps(i);
-
-                }
-                if (this.trapTiles[i].active && this.trapTiles[i].duration>1000) {
-                    this.scheduleNextTrap(i);
-                }
-
-            }
-
-        this.characters.forEach((character) => {
-            if (this.isCaraFall(character.getPosition(), character.size/2)) {
-                character.respawn();
-            }
-        });
-
-
-        for (const character of this.characters) {
-            for (const serpent of this.serpentGeants) {
-                if ( !character.isRespawn && serpent.collidesWith(character)) {
-                    character.takeDamage(2);
-                }
-            }
-
-        }
-
-        for (let effect of this.effects) {
-            effect.update(deltaTime);
-        }
-        this.effects = this.effects.filter(effect => !effect.finished);
-
-
     }
 
-    /**
-     * Dessine le niveau, y compris le trésor, les météorites et les personnages.
-     * @param context Le contexte de rendu du canvas.
-     */
-    draw(context: CanvasRenderingContext2D): void {
-        if (this.loading) {
-            this.drawLoadingMessage(context, "Chargement...");
-            return;
-        }
-
-        for (const row of this.tiles) {
-            for (const tile of row) {
-                tile.draw(context)
-            }
-        }
-        this.meteors.forEach((meteor) => meteor.draw(context));
-
-        this.treasure.draw(context);
-        this.electricBalls.forEach((ball) => ball.draw(context));
-
-        this.characters.forEach((character) => character.draw(context));
-        this.serpentGeants.forEach((serpent) => serpent.draw(context));
-        this.drawScores(context);
-
-        for (let effect of this.effects) {
-            effect.draw(context);
-        }
-    }
-
-    drawLoadingMessage(context: CanvasRenderingContext2D, message: string): void {
-        const { width, height } = this.game.canvas;
-        context.clearRect(0, 0, width, height);
-        context.fillStyle = 'black';
-        context.fillRect(0, 0, width, height);
-
-        context.fillStyle = 'white';
-        context.font = '30px Arial';
-        const textWidth = context.measureText(message).width;
-        context.fillText(message, (width - textWidth) / 2, height / 2);
-    }
-
-    /**
-     * Crée et ajoute une nouvelle météorite au niveau.
-     */
-    spawnMeteor(meteorSprite: Sprite): void {
-        const meteor = new Meteor(20*64, 11*64, meteorSprite, this);
-        this.meteors.push(meteor);
-    }
-
-
-    /**
-     * Dessine les scores des joueurs sur le canvas.
-     * @param context Le contexte de rendu du canvas.
-     */
-    drawScores(context: CanvasRenderingContext2D): void {
-        context.fillStyle = 'white';
-        context.font = '20px Arial';
-        let yOffset = 50;
-        this.characters.forEach((character, index) => {
-            const score = character.score;
-            context.fillText(`Joueur ${index + 1}:`,1290, yOffset);
-            if (score === 0)
-                context.fillText(` ${score} point`,1290, yOffset+40);
-            else
-                context.fillText(` ${score} points`,1290, yOffset+40);
-            character.drawPanel(context, 1300, yOffset+50);
-            yOffset += 180;
-        });
-    }
-
-
-    buildTiles(dico: { [key: string]: Sprite }, spriteTuile: Sprite) {        //array 24 * 32 of 0
+    private buildTiles(dico: { [key: string]: Sprite }, spriteTuile: Sprite) {        //array 24 * 32 of 0
 
         this.tiles = [];
         for (let i = 0; i < 11; i++) {
@@ -360,61 +363,16 @@ export class LevelTreasureHunt extends Level {
                 const isTrap = this.trapTiles ? this.trapTiles.some(t => t.x === j && t.y === i) : false;
 
                 if (val==0)
-                    row.push(new Tile(j * 64, i * 64, "blue", false, true, spriteTuile, isTrap));
+                    row.push(new Tile(j * 64, i * 64, "sol", false, true, spriteTuile, isTrap));
                 else if (val>=10000)
-                    row.push(new Tile(j * 64, i * 64, "blue", true, true, dico[val], isTrap));
+                    row.push(new Tile(j * 64, i * 64, "trou", true, true, dico[val], isTrap));
                 else
-                    row.push(new Tile(j * 64, i * 64, "blue", false, false, dico[val],isTrap));
+                    row.push(new Tile(j * 64, i * 64, "mur", false, false, dico[val],isTrap));
 
             }
             this.tiles.push(row);
         }
 
-    }
-
-    isPositionPassable(x: number, y: number, size :number): boolean {
-        for (let i = 0; i < this.tiles.length; i++) {
-            for (let j = 0; j < this.tiles[i].length; j++) {
-                const tile = this.tiles[i][j];
-                if (!tile.isPassable &&x < tile.position.x + 64 &&
-                    x + size > tile.position.x &&
-                    y < tile.position.y + 64 &&
-                    size+ y > tile.position.y) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-
-    isCaraFall(position: { x: number; y: number }, size: number) {
-        for (let i = 0; i < this.tiles.length; i++) {
-            for (let j = 0; j < this.tiles[i].length; j++) {
-                const tile = this.tiles[i][j];
-                if (tile.isHole && position.x < tile.position.x +8+ 48 &&
-                    position.x + size > tile.position.x+8 &&
-                    position.y < tile.position.y+8 + 48 &&
-                    size+ position.y > tile.position.y+8) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-
-
-    private activateTraps(i: number) {
-
-        this.characters.forEach((character) => {
-            if (character.getPosition().x < this.trapTiles[i].x*64 +16 + 32 &&
-                character.getPosition().x + character.size > this.trapTiles[i].x*64 +16 &&
-                character.getPosition().y < this.trapTiles[i].y*64 + 64 &&
-                character.size+ character.getPosition().y > this.trapTiles[i].y*64)
-                character.respawn()
-
-        })
     }
 
     private scheduleNextTrap(i: number) {

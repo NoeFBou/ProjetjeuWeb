@@ -4,7 +4,6 @@ import {Level} from "./Level.ts";
 
 export class CaraPlayer {
   private position: { x: number; y: number };
-
   public key : string[];
   public direction: string;
   sprite: Sprite;
@@ -33,22 +32,9 @@ export class CaraPlayer {
 
   }
 
-  public setPosition(x: number, y: number) {
-    this.position.x = x;
-    this.position.y = y;
-  }
-
-    public getPosition() {
-        return { x: this.position.x+8, y: this.position.y+10 };
-    }
-
-
-
   update(inputHandler: InputHandler, deltaTime: number, level: Level) {
     let dx = 0;
     let dy = 0;
-
-
     if (inputHandler.isKeyPressed(this.key[0])) dx -= this.speed; //gauche
     if (inputHandler.isKeyPressed(this.key[1])) dx += this.speed; //droite
     if (inputHandler.isKeyPressed(this.key[2])) dy -= this.speed; //haut
@@ -96,9 +82,30 @@ export class CaraPlayer {
         this.isVisible = true;
       }
     }
-
-
     this.sprite.update(deltaTime, this.direction);
+  }
+
+  draw(context: CanvasRenderingContext2D) {
+    if (this.isVisible)
+      this.sprite.render(context, this.position.x-12, this.position.y-25);
+  }
+
+  drawPanel(context: CanvasRenderingContext2D,panelX:number,panelY:number) {
+    this.sprite.render(context, panelX, panelY);
+    context.fillText(`Vie ${this.lives }:`,panelX, panelY+90);
+  }
+
+  public setPosition(x: number, y: number) {
+    this.position.x = x;
+    this.position.y = y;
+  }
+
+  public getPosition() {
+    return { x: this.position.x+8, y: this.position.y+10 };
+  }
+
+  static createCaraPlayer(sprite: Sprite, key: string[]) {
+      return new CaraPlayer(sprite, key);
   }
 
   setDirection(dx: number, dy: number) {
@@ -112,26 +119,6 @@ export class CaraPlayer {
     else if (dx < 0 && dy < 0) this.direction = 'up-left';
   }
 
-  draw(context: CanvasRenderingContext2D) {
-    //drawn square
-    //context.fillStyle = 'red';
-    //context.fillRect(this.position.x+8, this.position.y+10, this.size, this.size);
-    if (this.isVisible)
-      this.sprite.render(context, this.position.x-12, this.position.y-25);
-  }
-
-  drawPanel(context: CanvasRenderingContext2D,panelX:number,panelY:number) {
-    //drawn square
-    //context.fillStyle = 'red';
-    //context.fillRect(this.position.x+8, this.position.y+10, this.size, this.size);
-    this.sprite.render(context, panelX, panelY);
-    context.fillText(`Vie ${this.lives }:`,panelX, panelY+90);
-  }
-
-  static createCaraPlayer(sprite: Sprite, key: string[]) {
-      return new CaraPlayer(sprite, key);
-  }
-
   takeDamage(amount: number) {
     if(!this.isRespawn) {
       this.lives -= amount;
@@ -143,7 +130,6 @@ export class CaraPlayer {
       }
     }
   }
-
 
   getIsRespawn():boolean{
     return this.isRespawn;

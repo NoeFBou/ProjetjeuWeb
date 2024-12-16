@@ -3,15 +3,17 @@ import {CaraPlayer} from "./CaraPlayer.ts";
 import {LevelTreasureHunt} from "./LevelTreasureHunt.ts";
 import {MenuState} from "./menu/MenuState.ts";
 import {VictoryState} from "./VictoryState.ts";
+import {InputHandler} from "./InputHandler.ts";
 
 export class Game {
 
-    private canvas: HTMLCanvasElement;
+    canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
     private caraPlayer: CaraPlayer[];
     private currentLevel! : any; //TODO: fix this
     private levels: any[];
     private currentLevelIndex: number;
+    public inputHandler: InputHandler;
 
     constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D){
         this.canvas = canvas;
@@ -20,7 +22,7 @@ export class Game {
         this.currentLevel = new MenuState(this);
         this.levels = [];
         this.currentLevelIndex = 12;
-
+        this.inputHandler = new InputHandler();
         this.loadAndStart();
     }
 

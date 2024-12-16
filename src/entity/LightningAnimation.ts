@@ -1,13 +1,13 @@
 export class LightningAnimation {
-    x: number;
-    y: number;
-    image: HTMLImageElement;
-    frameCount: number;
-    frameWidth: number;
-    frameHeight: number;
-    frameIndex: number;
-    frameInterval: number; // en ms
-    timeSinceLastFrame: number;
+    private x: number;
+    private y: number;
+    private image: HTMLImageElement;
+    private frameCount: number;
+    private frameWidth: number;
+    private frameHeight: number;
+    private frameIndex: number;
+    private frameInterval: number; // en ms
+    private timeSinceLastFrame: number;
     finished: boolean;
 
     constructor(x: number, y: number) {
@@ -24,7 +24,7 @@ export class LightningAnimation {
         this.finished = false;
     }
 
-    update(deltaTime: number) {
+    public update(deltaTime: number) {
         if (this.finished) return;
 
         this.timeSinceLastFrame += deltaTime;
@@ -37,7 +37,7 @@ export class LightningAnimation {
         }
     }
 
-    draw(context: CanvasRenderingContext2D) {
+    public draw(context: CanvasRenderingContext2D) {
         if (this.finished) return;
 
         if (this.image.complete) {

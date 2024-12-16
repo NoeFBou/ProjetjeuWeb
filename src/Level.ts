@@ -9,34 +9,15 @@ export abstract class Level {
         this.characters = characters;
     }
 
-
-
-
-    /**
-     * Met à jour l'état du niveau.
-     * @param deltaTime Temps écoulé depuis la dernière mise à jour en millisecondes.
-     */
     abstract update(deltaTime: number): void;
 
-    /**
-     * Dessine le niveau sur le canvas.
-     * @param context Le contexte de rendu du canvas.
-     */
     abstract draw(context: CanvasRenderingContext2D): void;
 
     abstract isPositionPassable(newX: number, newY: number,size:number): boolean;
+
     abstract isCaraFall(position: { x: number; y: number }, size: number): boolean;
 
-    drawScores(context: CanvasRenderingContext2D) {
-        context.fillStyle = 'black';
-        context.font = '20px Arial';
-        let yOffset = 20;
-        this.characters.forEach((character, index) => {
-            const score = character.score;
-            context.fillText(`Joueur ${index + 1}: ${score} points`, 10, yOffset);
-            yOffset += 25;
-        });
-    }
+    abstract drawScores(context: CanvasRenderingContext2D): void;
 
     checkCollision(character: CaraPlayer, obj: { position: { x: number; y: number }; size: number }): boolean {
         const {x, y} = character.getPosition();

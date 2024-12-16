@@ -3,37 +3,36 @@
 import { Sprite } from '../Sprite.ts';
 
 export abstract class Entity {
-    position: { x: number; y: number };
-    speed: number;
-    targetShadow: boolean;
-    targetShadowPosition: { x: number; y: number };
-    sprite: Sprite;
-    size: number;
-    isActive: boolean;
-    canvasWidth: number;
-    canvasHeight: number;
-
+    public position: { x: number; y: number };
+    public size: number;
+    public isActive: boolean;
+    protected _canvasWidth: number;
+    protected _canvasHeight: number;
+    protected _speed: number;
+    protected _targetShadow: boolean;
+    protected _targetShadowPosition: { x: number; y: number };
+    protected _sprite: Sprite;
 
     constructor(canvasWidth: number, canvasHeight: number, sprite: Sprite, speed:number, size:number, position:{x:number,y:number}, hasShadow:boolean) {
         this.size = size;
-        this.canvasWidth = canvasWidth;
-        this.canvasHeight = canvasHeight;
-        this.sprite = sprite;
-        this.speed = speed
+        this._canvasWidth = canvasWidth;
+        this._canvasHeight = canvasHeight;
+        this._sprite = sprite;
+        this._speed = speed
         this.position = {
             x: position.x,
             y: position.y
         };
-        this.targetShadow = hasShadow;
-        this.targetShadowPosition = {
+        this._targetShadow = hasShadow;
+        this._targetShadowPosition = {
             x: position.x,
             y: position.y
         };
         this.isActive = true;
     }
 
-    abstract update(deltaTime: number): void;
+    public abstract update(deltaTime: number): void;
 
-    abstract draw(context: CanvasRenderingContext2D): void;
+    public abstract draw(context: CanvasRenderingContext2D): void;
 
 }

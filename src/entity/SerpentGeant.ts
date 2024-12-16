@@ -1,11 +1,11 @@
 import {CaraPlayer} from "../CaraPlayer.ts";
 
 export class SerpentGeant {
-    segments: {x: number, y: number, width: number, height: number}[];
-    speedX: number;
-    speedY: number;
-    segmentGap: number;
-    positions: {x: number, y: number}[];
+    private segments: {x: number, y: number, width: number, height: number}[];
+    private speedX: number;
+    private speedY: number;
+    private segmentGap: number;
+    public positions: {x: number, y: number}[];
 
     constructor(startX: number, startY: number) {
         const segmentWidth = 80;
@@ -28,7 +28,7 @@ export class SerpentGeant {
         this.positions.push({ x: startX, y: startY });
     }
 
-    update(deltaTime: number, canvasWidth: number, canvasHeight: number) {
+    public update(canvasWidth: number, canvasHeight: number) {
         const head = this.segments[0];
 
         // Déplacement de la tête
@@ -69,14 +69,14 @@ export class SerpentGeant {
         }
     }
 
-    draw(context: CanvasRenderingContext2D) {
+    public draw(context: CanvasRenderingContext2D) {
         context.fillStyle = 'purple';
         for (const seg of this.segments) {
             context.fillRect(seg.x, seg.y, seg.width, seg.height);
         }
     }
 
-    collidesWith(character: CaraPlayer): boolean {
+    public collidesWith(character: CaraPlayer): boolean {
         for (const seg of this.segments) {
             const charX = character.getPosition().x;
             const charY = character.getPosition().y;
