@@ -51,7 +51,7 @@ export class Meteor  extends Entity  {
             this.targetPosition.x - this.position.x,
             this.targetPosition.y - this.position.y
         );
-        this.impactTime = (distance / this.speed) * 1000; // en millisecondes
+        this.impactTime = (distance / this._speed) * 1000; // en millisecondes
 
         this.targetShadow = false;
         this.targetShadowPosition = { x: this.targetPosition.x, y: this.targetPosition.y };
@@ -66,7 +66,6 @@ export class Meteor  extends Entity  {
         else
             this.impactTime -= deltaTime;
 
-        // Si le temps est inférieur ou égal à 2000 ms, afficher l'ombre
         if (this.isFall && this.impactTime <= 2000 && !this.targetShadow) {
             this.targetShadow = true;
         }
@@ -75,7 +74,7 @@ export class Meteor  extends Entity  {
             const totalTime = (Math.hypot(
                 this.targetPosition.x - this.position.x,
                 this.targetPosition.y - this.position.y
-            ) / this.speed) * 1000;
+            ) / this._speed) * 1000;
 
             const progress = 1 - this.impactTime / totalTime;
 
@@ -100,60 +99,24 @@ export class Meteor  extends Entity  {
             this.isGround=false;
             this.isActive=false;
         }
-        this.sprite.update(deltaTime, 'static');
+        this._sprite.update(deltaTime, 'static');
         this.spritePoison.update(deltaTime, 'static');
         this.spriteTarget.update(deltaTime, 'static');
     }
 
-    /**
-     * Dessine la météorite et son ombre sur le canvas.
-     * @param context Le contexte de rendu du canvas.
-     */
     draw(context: CanvasRenderingContext2D): void {
         if (this.targetShadow) {
-            /*
-            context.fillStyle = 'black';
-            context.beginPath();
-            context.ellipse(
-                this.targetShadowPosition.x + this.size / 2,
-                this.targetShadowPosition.y + this.size / 2,
-                this.size / 2,
-                this.size / 4,
-                0,
-                0,
-                Math.PI * 2
-            );
-            context.fill();*/
             this.spriteTarget.render(context, this.targetPosition.x, this.targetPosition.y);
         }
 
         if (this.isFall) {
-            //context.fillStyle="red";
-            //context.fillRect(this.position.x,this.position.y,this.size,this.size);
-            this.sprite.render(context, this.position.x, this.position.y);
+            this._sprite.render(context, this.position.x, this.position.y);
         }
         if (this.isGround){
             this.spritePoison.render(context, this.position.x, this.position.y);
-            /*
-            context.fillStyle = 'orange';
-            context.beginPath();
-            context.ellipse(
-                this.targetShadowPosition.x + this.size ,
-                this.targetShadowPosition.y + this.size ,
-                this.size ,
-                this.size / 2,
-                0,
-                0,
-                Math.PI * 2
-            );
-            context.fill();*/
         }
     }
 
-    /**
-     * Indique si la météorite a atteint sa cible.
-     * @returns Vrai si la météorite a impacté, sinon faux.
-     */
     hasImpacted(): boolean {
         return this.isGround;
     }

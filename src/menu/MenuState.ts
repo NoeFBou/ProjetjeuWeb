@@ -28,7 +28,7 @@ export class MenuState {
 
     update(deltaTime: number) {
         if (this.currentStep === 'main') {
-            this.mainMenu.update(this.game.inputHandler);
+            this.mainMenu.update(deltaTime,this.game.inputHandler);
             if (this.mainMenu.isConfirmed) {
                 this.numberOfPlayers = this.mainMenu.selectedPlayers;
                 for (let i = 0; i < this.numberOfPlayers; i++) {
@@ -62,7 +62,11 @@ export class MenuState {
                 this.game.startNewLevel();
             } else {
                 this.errorMessage = "Skins ou touches en doublon, veuillez changer vos configurations!";
-                // Rester dans cet état ou donner l’opportunité de revenir au menu joueurs
+                for (let pm of this.playerMenus) {
+                    pm.isReady = false;
+                    pm.playerConfig.ready = false;
+                }
+                this.currentStep = 'playersAllAtOnce';
             }
         }
     }
@@ -74,12 +78,17 @@ export class MenuState {
             context.fillStyle = 'black';
             context.fillRect(0,0,this.game.canvas.width,this.game.canvas.height);
 
-            const spacing = 300; // espace horizontal entre chaque menu
+            const spacing = 300;
             for (let i = 0; i < this.numberOfPlayers; i++) {
                 context.save();
                 context.translate(50 + i * spacing, 50);
                 this.playerMenus[i].draw(context);
                 context.restore();
+            }
+            if (this.errorMessage !== '') {
+                context.fillStyle = 'red';
+                context.font = '20px Arial';
+                context.fillText(this.errorMessage, 100, 30);
             }
         } else if (this.currentStep === 'validation') {
             context.fillStyle = 'black';
@@ -105,11 +114,11 @@ export class MenuState {
     getDefaultKeysForPlayer(playerIndex: number): string[] {
         const defaultCombos = [
             ['q','d','z','s'],
-            ['l','j','k','i'],
-            ['h','f','g','t'],
-            ['*','m','ù','t'],
-            ['ArrowRight','ArrowLeft','ArrowDown','ArrowUp'],
-            ['6','4','5','8']
+            ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'],
+            ['4','6','8','5'],
+            ['j','l','i','k'],
+            ['f','h','t','g'],
+            ['m','*','^','ù']
         ];
         return defaultCombos[playerIndex];
     }

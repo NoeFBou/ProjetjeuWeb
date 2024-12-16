@@ -17,6 +17,8 @@ export class CaraPlayer {
   private isVisible: boolean;
   private timeSinceLastBlink: number;
   private blinkInterval: number;
+  invincibleTimeRemaining: number;
+  invincibleEffect : boolean;
 
   constructor(sprite: Sprite, key: string[]) {
     this.position = { x:0, y:0 };
@@ -29,6 +31,8 @@ export class CaraPlayer {
     this.blinkInterval = 100; // temps entre deux "switch" de visibilité
     this.timeSinceLastBlink = 0;
     this.isVisible = true;
+    this.invincibleTimeRemaining = 0;
+    this.invincibleEffect = false;
 
   }
 
@@ -82,17 +86,36 @@ export class CaraPlayer {
         this.isVisible = true;
       }
     }
+    if (this.invincibleTimeRemaining > 0) {
+      this.invincibleEffect = true;
+      this.invincibleTimeRemaining -= deltaTime;
+      if (this.invincibleTimeRemaining < 0) {
+        this.invincibleTimeRemaining = 0;
+      }
+    }
+    else
+      this.invincibleEffect = false;
+    console.log(this.invincibleEffect);
     this.sprite.update(deltaTime, this.direction);
   }
 
   draw(context: CanvasRenderingContext2D) {
-    if (this.isVisible)
-      this.sprite.render(context, this.position.x-12, this.position.y-25);
+    if (this.isVisible) {
+      if (this.invincibleEffect) {
+        context.strokeStyle = 'yellow';
+        context.lineWidth = 3;
+        context.beginPath();
+        context.arc(this.position.x + this.size / 2, this.position.y + this.size / 2, this.size / 2, 0, 2 * Math.PI);
+        context.stroke();
+
+      }
+      this.sprite.render(context, this.position.x - 12, this.position.y - 25);
+    }
   }
 
   drawPanel(context: CanvasRenderingContext2D,panelX:number,panelY:number) {
     this.sprite.render(context, panelX, panelY);
-    context.fillText(`Vie ${this.lives }:`,panelX, panelY+90);
+    context.fillText(`PV : ${this.lives }`,panelX, panelY+90);
   }
 
   public setPosition(x: number, y: number) {
@@ -120,7 +143,7 @@ export class CaraPlayer {
   }
 
   takeDamage(amount: number) {
-    if(!this.isRespawn) {
+    if(!this.isRespawn && !this.invincibleEffect) {
       this.lives -= amount;
       if (this.lives <= 0) {
         this.respawn();
@@ -143,5 +166,8 @@ export class CaraPlayer {
     this.lives=3;
   }
 
+  startInvincibility(duration: number) {
+    this.invincibleTimeRemaining = duration;
+  }
 
 }

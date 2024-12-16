@@ -9,7 +9,7 @@ export class Game {
 
     canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
-    private caraPlayer: CaraPlayer[];
+    caraPlayer: CaraPlayer[];
     private currentLevel! : any; //TODO: fix this
     private levels: any[];
     private currentLevelIndex: number;
@@ -21,9 +21,20 @@ export class Game {
         this.caraPlayer = [];
         this.currentLevel = new MenuState(this);
         this.levels = [];
-        this.currentLevelIndex = 12;
+        this.currentLevelIndex = 0;
         this.inputHandler = new InputHandler();
+
+
+        //print position x y souris
+        this.canvas.addEventListener('click', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            console.log("x: " + x + " y: " + y);
+        });
         this.loadAndStart();
+
+
     }
 
     addCaraPlayer(sprite : Sprite, key : string[]){

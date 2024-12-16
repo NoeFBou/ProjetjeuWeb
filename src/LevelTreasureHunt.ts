@@ -10,6 +10,7 @@ import {CaraPlayer} from "./CaraPlayer.ts";
 import {LightningAnimation} from "./entity/LightningAnimation.ts";
 import {BoulleElectrique} from "./entity/BoulleElectrique.ts";
 import { SerpentGeant } from './entity/SerpentGeant.ts';
+import {Item} from "./entity/Item.ts";
 
 export class LevelTreasureHunt extends Level {
     meteors: Meteor[];
@@ -32,6 +33,7 @@ export class LevelTreasureHunt extends Level {
     effects: LightningAnimation[];
     electricBalls: BoulleElectrique[];
     serpentGeants: SerpentGeant[];
+    items: Item[];
 
     constructor(characters: CaraPlayer[], game: Game, levelData: any) {
         super(characters);
@@ -47,11 +49,13 @@ export class LevelTreasureHunt extends Level {
         this.meteorsStart = levelData.meteorsStart;
         this.effects = [];
         this.electricBalls = [];
+        this.items=[];
 
         const electricBalls = levelData.boulleElectrique;
+        const itemP = levelData.items;
 
         this.initCharactersPosition(levelData.playerPosition );
-        this.loadAssets(electricBalls);
+        this.loadAssets(electricBalls,itemP);
         this.treasurePosition = { x:levelData.treasurePosition.x*64, y:levelData.treasurePosition.y*64 };
         this.playerPosition = levelData.playerPosition;
         this.serpentGeants = [];
@@ -77,6 +81,15 @@ export class LevelTreasureHunt extends Level {
         this.characters.forEach((character) => character.update(this.game.inputHandler, deltaTime,this));
         this.serpentGeants.forEach((serpent) => serpent.update(this.game.canvas.width-128, this.game.canvas.height-96));
         this.treasure.update(deltaTime);
+        this.items.forEach(item => item.update(deltaTime));
+
+        this.characters.forEach(character => {
+            this.items.forEach(item => {
+                if (this.checkCollision(character, item)) {
+                    item.onPickup(character);
+                }
+            });
+        });
         for (let i = 0; i < this.tiles.length; i++) {
             for (let j = 0; j < this.tiles[i].length; j++) {
                 this.tiles[i][j].update(deltaTime);
@@ -126,13 +139,13 @@ export class LevelTreasureHunt extends Level {
                     this.trapTiles[i].duration += deltaTime;
                     this.activateTraps(i);
                 }
-                if (this.trapTiles[i].active && this.trapTiles[i].duration>1000) {
+                if (this.trapTiles[i].active && this.trapTiles[i].duration>800  ) {
                     this.scheduleNextTrap(i);
                 }
             }
         this.characters.forEach((character) => {
             if (this.isCaraFall(character.getPosition(), character.size/2)) {
-                character.respawn();
+                character.takeDamage(3);
             }
         });
 
@@ -144,6 +157,8 @@ export class LevelTreasureHunt extends Level {
             }
 
         }
+
+
     }
 
     public draw(context: CanvasRenderingContext2D): void {
@@ -161,6 +176,7 @@ export class LevelTreasureHunt extends Level {
 
         this.treasure.draw(context);
         this.electricBalls.forEach((ball) => ball.draw(context));
+        this.items.forEach(item => item.draw(context));
 
         this.characters.forEach((character) => character.draw(context));
         this.serpentGeants.forEach((serpent) => serpent.draw(context));
@@ -244,8 +260,11 @@ export class LevelTreasureHunt extends Level {
 
     }
 
-    private loadAssets(electricBalls: [{x:number,y :number,waypoints:[],speed:number}]):void{
+    private loadAssets(electricBalls: [{ x: number; y: number; waypoints: []; speed: number }], itemP: any):void{
         const treasureSprite = new Sprite('src/assets/portail.png', 6, 100, ['static']);
+        const potionRouge = new Sprite('src/assets/entity/potionrouge.png', 4, 100, ['static']);
+        const potionBleu = new Sprite('src/assets/entity/potionbleu.png', 4, 100, ['static']);
+
         this.meteorSprite = new Sprite('src/assets/entity/potion.png', 4, 100, ['static']);
         this.spriteTuile = new Sprite('src/assets/labo/tuile.png', 1, 100, ['static'])
         this.boullElectriqueSprite = new Sprite('src/assets/entity/boulleElectrique.png', 8, 100, ['static']);
@@ -326,6 +345,17 @@ export class LevelTreasureHunt extends Level {
             for (let i = 0; i < this.meteorsStart; i++) {
                 this.spawnMeteor(this.meteorSprite);
             }
+            for (let i = 0; i < itemP.length; i++) {
+
+                if (itemP[i].type === 'health')
+                    this.items.push(new Item(20*64, 11*64,potionRouge, itemP[i].x,itemP[i].y, itemP[i].type));
+                else
+                    this.items.push(new Item(20*64, 11*64,potionBleu, itemP[i].x, itemP[i].y, itemP[i].type));
+            }
+            console.log(itemP);
+
+            console.log(this.items);
+
             for (let i = 0; i < electricBalls.length; i++)
                 this.electricBalls.push(
                     new BoulleElectrique(

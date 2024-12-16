@@ -35,9 +35,11 @@ export class PlayerConfigMenu {
 
         this.availableKeySets = [
             ['q','d','z','s'],
-            ["j","l","i","k"],
-            ["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"],
-            ["4","6","8","5"]
+            ['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'],
+            ['4','6','8','5'],
+            ['j','l','i','k'],
+            ['f','h','t','g'],
+            ['m','*','^','ù']
         ];
         this.isReady = false;
 
@@ -163,15 +165,11 @@ export class PlayerConfigMenu {
 
     drawSkinPreview(context: CanvasRenderingContext2D, x: number, y: number) {
         if (!this.skinImageLoaded) {
-            // L’image n’est pas encore chargée, afficher un texte ou rien
             context.fillStyle = 'gray';
             context.fillText('Chargement...', x, y);
             return;
         }
 
-        // On suppose que la première ligne du sprite contient les frames d’animation
-        // frameIndex détermine la frame à dessiner
-        // On dessine la frame frameIndex à partir du sprite sheet
 
         const sx = this.frameIndex * this.frameWidth; // Position x de la frame dans le sprite sheet
         const sy = 7*64; // Première ligne, donc y = 0
