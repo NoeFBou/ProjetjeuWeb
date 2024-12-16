@@ -1,6 +1,6 @@
 // src/Meteor.ts
 
-import { Sprite } from './Sprite';
+import { Sprite } from '../Sprite.ts';
 
 export class Meteor {
     position: { x: number; y: number };
@@ -18,8 +18,8 @@ export class Meteor {
     isGroundTime:number = 6000;
 
 
-    constructor(canvasWidth: number, canvasHeight: number, sprite: Sprite) {
-        this.size = 32;
+    constructor(r, canvasHeight: number, sprite: Sprite) {
+        this.sizecanvasWidth: numbe = 32;
         this.sprite = sprite;
         this.speed = 500; // Vitesse de chute en pixels par seconde
 

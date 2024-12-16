@@ -1,9 +1,9 @@
 import {Sprite} from "./Sprite.ts";
 import {CaraPlayer} from "./CaraPlayer.ts";
 import {InputHandler} from "./InputHandler.ts";
-import {Level} from "./Level.ts";
 import {LevelTreasureHunt} from "./LevelTreasureHunt.ts";
-import {LevelSurvive} from "./LevelSurvive.ts";
+import {MenuState} from "./menu/MenuState.ts";
+import {VictoryState} from "./VictoryState.ts";
 
 export class Game {
 
@@ -11,21 +11,28 @@ export class Game {
     ctx: CanvasRenderingContext2D;
     caraPlayer: CaraPlayer[];
     inputHandler : InputHandler;
-    currentLevel : Level;
-    //diagonal_
+    currentLevel! : any; //TODO: fix this
     direction: string[] = ['up', 'right', 'left', 'down-right', 'down-left', 'up-right',  'up-left', 'down'];
+    levels: any[];
+    currentLevelIndex: number;
 
     constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D){
         this.canvas = canvas;
         this.ctx = context;
         this.caraPlayer = [];
         this.inputHandler = new InputHandler();
+        this.currentLevel = new MenuState(this);
+        this.levels = [];
+        this.currentLevelIndex = 10;
+        this.loadAndStart();
 
-       // this.startNewLevel();
-
+        //requestAnimationFrame(this.gameLoop.bind(this));
+    }
+    async loadAndStart() {
+        const response = await fetch('src/assets/LevelData.json');
+        this.levels = await response.json();
+        this.currentLevel = new MenuState(this);
         requestAnimationFrame(this.gameLoop.bind(this));
-        this.addCaraPlayer(
-            new Sprite('src/assets/skin/gluant.png', 9, 100, this.direction), ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown']);
     }
 
     addCaraPlayer(sprite : Sprite, key : string[]){
@@ -42,15 +49,32 @@ export class Game {
 
     start() {
         //requestAnimationFrame(this.gameLoop.bind(this));
-        this.currentLevel = new LevelTreasureHunt(this.caraPlayer,this);
+       // this.currentLevel = new LevelTreasureHunt(this.caraPlayer,this);
     }
 
     startNewLevel() {
-        const levelType = Math.random() < 0.5 ? 'TypeOne' : 'TypeTwo';
-        if (levelType === 'TypeOne') {
-            this.currentLevel = new LevelTreasureHunt(this.caraPlayer, this);
+        const levelData = this.levels.levels[this.currentLevelIndex];
+        if (!levelData) {
+            // Si pas de niveau => tous terminés
+            this.currentLevel = new VictoryState(this);
+            return;
+        }
+        this.currentLevel = new LevelTreasureHunt(this.caraPlayer, this, levelData);
+/*
+        // Construire le niveau en fonction du type
+        if (levelData.type === "TypeOne") {
+            this.currentLevel = new LevelTypeOne(this.characters, this, levelData);
         } else {
-            this.currentLevel = new LevelSurvive(this.caraPlayer, this);
+            this.currentLevel = new LevelTypeTwo(this.characters, this, levelData);
+        }*/
+    }
+
+    endCurrentLevel() {
+        this.currentLevelIndex++;
+        if (this.currentLevelIndex >= 25) {
+            this.currentLevel = new VictoryState(this);
+        } else {
+            this.startNewLevel();
         }
     }
 }

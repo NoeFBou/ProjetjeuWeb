@@ -3,13 +3,14 @@ import {InputHandler} from "./InputHandler.ts";
 import {Level} from "./Level.ts";
 
 export class CaraPlayer {
-  public position: { x: number; y: number };
+  private position: { x: number; y: number };
+
   public key : string[];
   public direction: string;
   sprite: Sprite;
-  speed: number = 7;
+  speed: number = 4;
   public score: number = 0;
-  size = 64;
+  size = 40;
   respawnPosition: { x: number; y: number };
   isRespawn : boolean;
   respawnTime=0;
@@ -23,10 +24,21 @@ export class CaraPlayer {
     this.isRespawn=false;
   }
 
+  public setPosition(x: number, y: number) {
+    this.position.x = x;
+    this.position.y = y;
+  }
+
+    public getPosition() {
+        return { x: this.position.x+8, y: this.position.y+10 };
+    }
+
+
 
   update(inputHandler: InputHandler, deltaTime: number, level: Level) {
     let dx = 0;
     let dy = 0;
+
 
     if (inputHandler.isKeyPressed(this.key[0])) dx -= this.speed; //gauche
     if (inputHandler.isKeyPressed(this.key[1])) dx += this.speed; //droite
@@ -35,10 +47,24 @@ export class CaraPlayer {
     const newX = this.position.x + dx;
     const newY = this.position.y + dy;
 
-    if (level.isPositionPassable(newX, newY)) {
-      this.position.x = newX;
-      this.position.y = newY;
+    const xok:boolean = level.isPositionPassable(newX, this.position.y-dy,this.size);
+    const yok:boolean = level.isPositionPassable(this.position.x-dx, newY,this.size);
+
+    if (xok) {
+      this.position.x += dx;
     }
+    else {
+      this.position.x -= dx;
+    }
+    if (yok) {
+      this.position.y += dy;
+    }
+    else {
+
+      this.position.y -= dy;
+    }
+
+
     if (this.position.x + dx < 0) dx = 0;
     else if (this.position.x + dx > 1400 - this.size) dx = 1400-this.size;
     else this.position.x += dx;
@@ -69,7 +95,10 @@ export class CaraPlayer {
   }
 
   draw(context: CanvasRenderingContext2D) {
-    this.sprite.render(context, this.position.x, this.position.y);
+    //drawn square
+    //context.fillStyle = 'red';
+    //context.fillRect(this.position.x+8, this.position.y+10, this.size, this.size);
+    this.sprite.render(context, this.position.x-12, this.position.y-25);
   }
 
 
@@ -86,4 +115,6 @@ export class CaraPlayer {
     this.isRespawn=true;
     this.respawnTime=1000;
   }
+
+
 }

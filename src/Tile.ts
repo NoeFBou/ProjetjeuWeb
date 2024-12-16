@@ -1,5 +1,4 @@
 // src/Tile.ts
-
 import { Sprite } from './Sprite';
 
 export class Tile {
@@ -9,14 +8,16 @@ export class Tile {
     sprite: Sprite;
     type:string;
     isPassable: boolean;
+    isTrap: boolean;
 
-    constructor(x: number, y: number,type:string, hole:boolean=false,isPassable: boolean = true) {
+    constructor(x: number, y: number, type: string, hole: boolean, isPassable: boolean, sprie: Sprite, isTrap: boolean) {
         this.position = { x, y };
         this.damageLevel = 0;
         this.isHole = hole;
         this.type = type;
-        this.sprite = new Sprite('assets/images/tileset.png', 1, 1000, ['normal']);
+        this.sprite = sprie;
         this.isPassable = isPassable;
+        this.isTrap = isTrap;
     }
 
     /**
@@ -29,6 +30,11 @@ export class Tile {
             // Changez le sprite pour représenter un trou si nécessaire
         }
     }
+    update(deltaTime: number): void {
+
+        this.sprite.update(deltaTime, 'static');
+
+    }
 
 
 
@@ -40,7 +46,6 @@ export class Tile {
             this.damageLevel -= 1;
             if (this.damageLevel < 3) {
                 this.isHole = false;
-                // Changez le sprite pour représenter une tuile réparée si nécessaire
             }
         }
     }
@@ -50,10 +55,8 @@ export class Tile {
      * @param context Le contexte de rendu du canvas.
      */
     draw(context: CanvasRenderingContext2D): void {
+        this.sprite.render(context, this.position.x, this.position.y);
 
-        context.fillStyle = this.type;
-        context.fillRect(this.position.x, this.position.y, 32, 32)
 
-       // this.sprite.render(context, this.position.x, this.position.y);
     }
 }

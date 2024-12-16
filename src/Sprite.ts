@@ -17,11 +17,15 @@ export class Sprite {
         this.directions = directions;
         this.currentDirectionIndex = 0;
         this.image.onload = () => {
-            console.log("test");
-            console.log(this.image);
-            console.log(this.image.height);
-
+            //console.log("");
         }
+    }
+
+    load(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.image.onload = () => resolve();
+            this.image.onerror = () => reject(new Error(`Impossible de charger l'image : ${this.image.src}`));
+        });
     }
 
     update(deltaTime: number, direction: string) {

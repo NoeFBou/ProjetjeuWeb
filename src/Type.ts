@@ -1,0 +1,1 @@
+//type position x y

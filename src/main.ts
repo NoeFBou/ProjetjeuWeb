@@ -15,7 +15,7 @@ window.addEventListener('load', () => {
         return;
     }
 
-    const game = new Game(canvas, context);
+    new Game(canvas, context);
 
-    game.start();
+    //game.start();
 });

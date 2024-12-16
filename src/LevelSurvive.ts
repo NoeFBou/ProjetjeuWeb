@@ -33,7 +33,7 @@ export class LevelSurvive extends Level {
         for (let y = 0; y < rows; y++) {
             const row: Tile[] = [];
             for (let x = 0; x < cols; x++) {
-                row.push(new Tile(x * this.tileSize, y * this.tileSize,"grey"));
+                row.push(new Tile(x * this.tileSize, y * this.tileSize, "grey", undefined, undefined, undefined, isTrap));
             }
             tiles.push(row);
         }
@@ -112,7 +112,7 @@ export class LevelSurvive extends Level {
 
     regenerateTiles() {
         const holes = this.getHoles();
-        const candidates = [];
+        const candidates: any[] = [];
 
         holes.forEach((hole) => {
             const neighbors = this.getNeighborTiles(hole);
@@ -188,17 +188,7 @@ export class LevelSurvive extends Level {
         return neighbors;
     }
 
-    drawScores(context: CanvasRenderingContext2D) {
-// Affichez les scores des joueurs à l'écran
-        context.fillStyle = 'black';
-        context.font = '20px Arial';
-        let yOffset = 20;
-        this.characters.forEach((character, index) => {
-            const score = character.score;
-            context.fillText(`Joueur ${index + 1}: ${score} points`, 10, yOffset);
-            yOffset += 25;
-        });
-    }
+
 
     isPositionPassable(x: number, y: number): boolean {
         const tileX = Math.floor(x / this.tileSize);
