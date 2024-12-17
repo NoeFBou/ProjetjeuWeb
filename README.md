@@ -5,38 +5,46 @@ Jouer ici:
 https://projetjeuweb.netlify.app/
 
 ## Description du Projet
-Ce projet a été réaliser par moi dans le cadre du cours de Programmation Web à l'Université de Nice.
-Le but du jeu est de faire en sorte que le joueur puisse atteindre la sortie du labyrinthe en évitant les obstacles.
-Le jeu se compose de 20 niveaux et peut etre joué en solo ou à plusieurs sur une meme machine.
+Ce projet a été réalisé par moi dans le cadre du cours de Programmation Web à l'Université de Nice.
+Le but du jeu est de permettre au(x) joueur(s) d'atteindre la sortie du labyrinthe en évitant les divers obstacles. 
+Le jeu comprend 20 niveaux et peut se jouer en solo ou en multijoueur local (de 1 à 4 joueurs sur la même machine).
+
+## Language et Technologies 
+Le jeu a été developpé en Type Script et fonctionne sur navigateur. j'ai utilisé vite pour le déployement. 
+
+## Installation
+Pour lancer le projet en local, cloner le répertoire et utilisé la commande npm run dev.
 
 ## Fonctionnalités du jeu
 
 ### Paramètres d'une partie
-- Les peuvent choisir le nombre de joueurs entre 1 et 4 qui participeront à la partie.
-- Les joueurs peuvent choisir leur avatar parmi une de 8 couleurs différentes.
-- Les joueurs peuvent également chosir les touches de déplacement de leur avatar.
-- Il faut que les paramètres soient uniques pour chaque joueur.
+- Les joueurs peuvent sélectionner le nombre de participants (entre 1 et 4).
+- Chaque joueur choisit son avatar parmi 8 couleurs différentes.
+- Chaque joueur définit ses propres touches de déplacement.
+- Toutes les configurations (avatar, touches) doivent être uniques pour chaque joueur.
 
-### Déroulement d'une partie
-- Les joueurs doivent atteindre la sortie du labyrinthe (le portail) en évitant les obstacles.
-- Le joueur qui atteint la sortie en premier gagne 1 point et le niveau suivant est chargé.
+### Déroulement d'une Partie
+- Les joueurs doivent atteindre la sortie du labyrinthe (un portail) en évitant les obstacles.
+- Le premier joueur à atteindre la sortie marque 1 point, puis le niveau suivant est chargé.
 - La partie se termine au bout de 20 niveaux.
-- Chaques joueurs a 3 points de vie. Si un joueur perd tous ses points de vie, il revient au début du niveau.
-- Les joueurs peuvent également choisir le niveau en cours de jeu via un menu déroulant.
+- Chaque joueur possède 3 points de vie. S'il perd toutes ses vies, il revient au point de départ du niveau.
+- Les joueurs peuvent également choisir le niveau à tout moment grâce à un menu déroulant.
+
 
 ### Obstacles
-Il y plusieurs types d'obstacles dans le jeu pour rendre la partie plus difficile qui apparaissent au fur et à mesure que le niveau augmente:
-- Les murs: les joueurs ne peuvent pas les traverser.
-- Les trous: les joueurs tombent dedans et reviennent au début du niveau.
-- les "potions" (météorites): des "potions" tombent du ciel et les joueurs perdent un point de vie s'ils se font toucher ou s'ils marchent dans le poison laissé par la potion. Les potions ne peuvent pas tomber sur une case infranchissable. Le poison reste sur la case pendant 5 secondes.
-- les éclairs: des éclais frappent le sol et les joueurs perdent un point de vie s'ils se font toucher. Les cases tombe sur une case suivant un intervalle de temps aléatoire ou défini.
-- Les boules électriques: les boules électriques se déplacent dans le labyrinthe en suivant un chemin prédéfini et les joueurs perdent un point de vie s'ils se font toucher.
-- Les monstres: les monstres se déplacents dans le labyrinthe en rebondissant sur les murs et les joueurs perdent deux points de vie s'ils se font toucher.
+Au fur et à mesure de la progression, différents types d'obstacles apparaissent :
+- Murs : Infranchissables.
+- Trous et "lave": Le joueur qui tombe dedans retourne au début du niveau.
+- Potions (météorites) : Des potions tombent du ciel. Si un joueur se fait toucher ou marche dans le poison laissé par la potion, il perd 1 point de vie. Les potions ne tombent pas sur une case infranchissable. Le poison reste sur la case pendant 5 secondes.
+- Éclairs : Ils frappent le sol, et un joueur touché perd 1 point de vie. Les éclairs apparaissent à intervalles réguliers ou aléatoires.
+- Boules électriques : Elles se déplacent le long d'un chemin prédéfini dans le labyrinthe. Un joueur touché perd 1 point de vie.
+- Monstres : Ils se déplacent en rebondissant sur les murs. Un joueur touché perd 2 points de vie.
 
 ### Items
-Pour aider les joueurs, des items sont présents dans les niveaux. 
-Les items sont consommés par les joueurs qui se trouvent dessus et réapparaissent au bout de 4 secondes.
-Il existe 2 items différents : l'un pour récupérer des pv, l'autre pour être invincible pendant 4 secondes.
+Pour aider les joueurs, certains items apparaissent dans les niveaux. Lorsqu'un joueur marche sur un item, celui-ci est consommé et réapparaît 4 secondes plus tard. Il existe deux types d'items :
+- Un item qui restaure un point de vie (sans dépasser le maximum de 3).
+- Un item qui rend le joueur invincible pendant 4 secondes.
 
-## Graphique 
-J'ai essayé de réaliser des graphiques pour ce jeu en pixel art.
+## Graphismes 
+Un style pixel art a été adopté pour les éléments graphiques afin de donner au jeu une esthétique rétro et cohérente.
+
