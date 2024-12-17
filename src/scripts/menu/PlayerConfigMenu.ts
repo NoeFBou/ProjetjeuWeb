@@ -79,18 +79,22 @@ export class PlayerConfigMenu {
         }
 
         if (this.categories[this.selectedCategoryIndex] === "Skin") {
-            if (inputHandler.isKeyPressed(playerKeys[0])) { // gauche
+            if (inputHandler.isKeyPressed(playerKeys[0]) && this.timeSinceLastNav > this.navigationCooldown) { // gauche
                 this.changeSkin(-1);
+                this.timeSinceLastNav = 0;
             }
-            if (inputHandler.isKeyPressed(playerKeys[1])) { // droite
+            if (inputHandler.isKeyPressed(playerKeys[1]) && this.timeSinceLastNav > this.navigationCooldown) { // droite
                 this.changeSkin(1);
+                this.timeSinceLastNav = 0;
             }
         } else if (this.categories[this.selectedCategoryIndex] === "Touches") {
-            if (inputHandler.isKeyPressed(playerKeys[0])) {
+            if (inputHandler.isKeyPressed(playerKeys[0]) && this.timeSinceLastNav > this.navigationCooldown) {
                 this.changeKeys(-1);
+                this.timeSinceLastNav = 0;
             }
-            if (inputHandler.isKeyPressed(playerKeys[1])) {
+            if (inputHandler.isKeyPressed(playerKeys[1]) && this.timeSinceLastNav > this.navigationCooldown) {
                 this.changeKeys(1);
+                this.timeSinceLastNav = 0;
             }
         } else if (this.categories[this.selectedCategoryIndex] === "Prêt") {
             if (inputHandler.isKeyPressed('Enter')) {
