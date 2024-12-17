@@ -1,16 +1,21 @@
-# Workflow pour déployer un site Jekyll avec le dossier `public` sur GitHub Pages
-name: Deploy Jekyll site to Pages
+# Workflow pour déployer une application Vite sur GitHub Pages
+name: Deploy Vite app to Pages
 
 on:
+  # Déclenchement automatique lors des pushs sur la branche principale
   push:
     branches: ['main']
+
+  # Permet de déclencher manuellement le workflow depuis l'onglet Actions
   workflow_dispatch:
 
+# Permissions nécessaires pour déployer sur GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Empêcher les déploiements simultanés
 concurrency:
   group: 'pages'
   cancel-in-progress: true
@@ -24,29 +29,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Étape 2 : Configurer Ruby pour Jekyll
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      # Étape 2 : Installer Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          ruby-version: '3.1'
-          bundler-cache: true
+          node-version: 20 # Version de Node.js
+          cache: 'npm'     # Utilisation du cache pour npm
 
-      # Étape 3 : Installer les dépendances Jekyll
+      # Étape 3 : Installer les dépendances
       - name: Install dependencies
-        run: bundle install
+        run: npm ci
 
-      # Étape 4 : Générer le site avec Jekyll
-      - name: Build the site
-        run: bundle exec jekyll build --destination ./dist
+      # Étape 4 : Construire l'application
+      - name: Build the application
+        run: npm run build
 
       # Étape 5 : Configurer GitHub Pages
       - name: Configure Pages
         uses: actions/configure-pages@v4
 
-      # Étape 6 : Télécharger les fichiers générés
+      # Étape 6 : Télécharger le dossier dist pour le déploiement
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          # Spécifier le dossier contenant l'application générée
           path: './dist'
 
       # Étape 7 : Déployer sur GitHub Pages
