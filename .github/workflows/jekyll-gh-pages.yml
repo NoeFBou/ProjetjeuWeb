@@ -46,16 +46,16 @@ jobs:
 
       # Étape 5 : Configurer GitHub Pages
       - name: Configure Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v3
 
       # Étape 6 : Télécharger le dossier dist pour le déploiement
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v1
         with:
-          # Spécifier le dossier contenant l'application générée
-          path: './dist'
+          # Upload dist repository
+          path: "./dist"
 
       # Étape 7 : Déployer sur GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v1
