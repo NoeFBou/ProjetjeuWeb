@@ -2,6 +2,7 @@
 
 ## Liens du jeu
 Jouer ici:
+https://projetjeuweb.netlify.app/
 
 ## Description du Projet
 Ce projet a été réaliser par moi meme dans le cadre du cours de Programmation Web à l'Université de Nice.
