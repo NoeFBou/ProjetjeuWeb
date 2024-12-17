@@ -13,7 +13,7 @@ Le jeu comprend 20 niveaux et peut se jouer en solo ou en multijoueur local (de 
 Le jeu a été developpé en Type Script et fonctionne sur navigateur. j'ai utilisé vite pour le déployement. 
 
 ## Installation
-Pour lancer le projet en local, cloner le répertoire et utilisé la commande npm run dev.
+Pour lancer le projet en local, cloner le répertoire et utilisé la commande 'npm run dev'.
 
 ## Fonctionnalités du jeu
 
