@@ -37,7 +37,7 @@ jobs:
 
       # Étape 4 : Générer le site avec Jekyll
       - name: Build the site
-        run: bundle exec jekyll build --destination ./public
+        run: bundle exec jekyll build --destination ./dist
 
       # Étape 5 : Configurer GitHub Pages
       - name: Configure Pages
@@ -47,7 +47,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './public'
+          path: './dist'
 
       # Étape 7 : Déployer sur GitHub Pages
       - name: Deploy to GitHub Pages
