@@ -25,13 +25,12 @@ export class Game {
         this.inputHandler = new InputHandler();
 
 
-        //print position x y souris
-        this.canvas.addEventListener('click', (e) => {
+/*        this.canvas.addEventListener('click', (e) => {
             const rect = this.canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             console.log("x: " + x + " y: " + y);
-        });
+        });*/
         this.loadAndStart();
 
 
