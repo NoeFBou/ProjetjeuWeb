@@ -5,7 +5,7 @@ Jouer ici:
 https://projetjeuweb.netlify.app/
 
 ## Description du Projet
-Ce projet a été réaliser par moi meme dans le cadre du cours de Programmation Web à l'Université de Nice.
+Ce projet a été réaliser par moi dans le cadre du cours de Programmation Web à l'Université de Nice.
 Le but du jeu est de faire en sorte que le joueur puisse atteindre la sortie du labyrinthe en évitant les obstacles.
 Le jeu se compose de 20 niveaux et peut etre joué en solo ou à plusieurs sur une meme machine.
 
@@ -32,3 +32,11 @@ Il y plusieurs types d'obstacles dans le jeu pour rendre la partie plus difficil
 - les éclairs: des éclais frappent le sol et les joueurs perdent un point de vie s'ils se font toucher. Les cases tombe sur une case suivant un intervalle de temps aléatoire ou défini.
 - Les boules électriques: les boules électriques se déplacent dans le labyrinthe en suivant un chemin prédéfini et les joueurs perdent un point de vie s'ils se font toucher.
 - Les monstres: les monstres se déplacents dans le labyrinthe en rebondissant sur les murs et les joueurs perdent deux points de vie s'ils se font toucher.
+
+### Items
+Pour aider les joueurs, des items sont présents dans les niveaux. 
+Les items sont consommés par les joueurs qui se trouvent dessus et réapparaissent au bout de 4 secondes.
+Il existe 2 items différents : l'un pour récupérer des pv, l'autre pour être invincible pendant 4 secondes.
+
+## Graphique 
+J'ai essayé de réaliser des graphiques pour ce jeu en pixel art.
