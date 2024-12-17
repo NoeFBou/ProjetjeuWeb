@@ -77,6 +77,9 @@ export class MenuState {
         } else if (this.currentStep === 'playersAllAtOnce') {
             context.fillStyle = 'black';
             context.fillRect(0,0,this.game.canvas.width,this.game.canvas.height);
+            context.fillStyle = 'white';
+            context.font = '20px Arial';
+            context.fillText(`Entrée pour valider.`, 100, 30);
 
             const spacing = 300;
             for (let i = 0; i < this.numberOfPlayers; i++) {
